@@ -289,19 +289,24 @@ module.exports = async (req, res) => {
                           apiData.region !== apiData.country_name &&
                           apiData.region.length < 30;
 
-    // Validate Abstract API city/region (they often return country name as city)
+    // Validate Abstract API city/region (they often swap city/state for US numbers)
+    // For US: city is often state name, region is actual city
     const isAbstractCityValid = abstractData?.phone_location?.city &&
                         abstractData.phone_location.city !== abstractData.phone_location.country_name &&
-                        abstractData.phone_location.city !== abstractData.phone_location.region &&
-                        abstractData.phone_location.city.length < 20;
+                        abstractData.phone_location.city.length < 25;
 
     const isAbstractRegionValid = abstractData?.phone_location?.region &&
                           abstractData.phone_location.region !== abstractData.phone_location.country_name &&
                           abstractData.phone_location.region.length < 30;
 
+    // For US numbers, Abstract API often returns state as city and city as region
+    const isUS = countryCode === 'US';
+    const abstractCity = isUS && abstractData?.phone_location?.region ? abstractData.phone_location.region : (isAbstractCityValid ? abstractData.phone_location.city : '');
+    const abstractRegion = isUS && abstractData?.phone_location?.city && abstractData.phone_location.city.length < 20 ? abstractData.phone_location.city : (isAbstractRegionValid ? abstractData.phone_location.region : '');
+
     const location = {
-      city: (isAbstractCityValid ? abstractData.phone_location.city : '') || (isNumverifyCityValid ? apiData.location : '') || defaultLocation.city,
-      region: (isAbstractRegionValid ? abstractData.phone_location.region : '') || (isNumverifyRegionValid ? apiData.region : '') || defaultLocation.region
+      city: abstractCity || (isNumverifyCityValid ? apiData.location : '') || defaultLocation.city,
+      region: abstractRegion || (isNumverifyRegionValid ? apiData.region : '') || defaultLocation.region
     };
     
     const timezone = getTimezone(countryCode);
