@@ -763,6 +763,28 @@
       </div>
     </div>
 
+    <!-- PWA Install Prompt -->
+    <div class="modal-overlay" id="installModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Install PhoneSint</h3>
+          <button class="modal-close" id="closeInstallModal"><i class="ph ph-x"></i></button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 16px;">Install PhoneSint for quick access and offline support.</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="action-btn" id="installBtn" style="justify-content: center; background: var(--accent); color: var(--bg);">
+            <i class="ph ph-download-simple"></i> Install Now
+          </button>
+          <button class="action-btn" id="laterInstallBtn" style="justify-content: center;">
+            Maybe Later
+          </button>
+        </div>
+        <p style="color: var(--text-subtle); font-size: 0.75rem; margin-top: 16px; text-align: center;">
+          ℹ️ In Firefox, go to Menu → Install PhoneSint
+        </p>
+      </div>
+    </div>
+
     <footer class="footer">
       <div class="container">
         <div class="footer-content">
@@ -801,6 +823,10 @@
       shareUrl: document.getElementById('shareUrl'),
       exportJsonBtn: document.getElementById('exportJsonBtn'),
       exportTxtBtn: document.getElementById('exportTxtBtn'),
+      installModal: document.getElementById('installModal'),
+      closeInstallModal: document.getElementById('closeInstallModal'),
+      installBtn: document.getElementById('installBtn'),
+      laterInstallBtn: document.getElementById('laterInstallBtn'),
       resultFlag: document.getElementById('resultFlag'),
       resultNumber: document.getElementById('resultNumber'),
       currentTime: document.getElementById('currentTime'),
@@ -1270,9 +1296,57 @@ Generated: ${new Date().toLocaleString()}
     loadFromUrl();
     
     // Register service worker for PWA
+    let deferredPrompt = null;
+    
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
+      navigator.serviceWorker.register('/sw.js').then(() => {
+        console.log('Service Worker registered');
+      }).catch((err) => {
+        console.error('SW registration failed:', err);
+      });
     }
+    
+    // Listen for install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // Show install prompt after 3 seconds
+      setTimeout(() => {
+        const hasDismissed = localStorage.getItem('phonesint_install_dismissed');
+        if (!hasDismissed) {
+          elements.installModal.classList.add('visible');
+        }
+      }, 3000);
+    });
+    
+    // Install button click
+    elements.installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('Install prompt outcome:', outcome);
+        deferredPrompt = null;
+        elements.installModal.classList.remove('visible');
+      } else {
+        // Firefox fallback message
+        alert('In Firefox: Click the menu (≡) → Install PhoneSint');
+      }
+    });
+    
+    // Later button click
+    elements.laterInstallBtn.addEventListener('click', () => {
+      localStorage.setItem('phonesint_install_dismissed', 'true');
+      elements.installModal.classList.remove('visible');
+    });
+    
+    // Close install modal
+    elements.closeInstallModal.addEventListener('click', () => {
+      elements.installModal.classList.remove('visible');
+    });
+    
+    elements.installModal.addEventListener('click', (e) => {
+      if (e.target === elements.installModal) elements.installModal.classList.remove('visible');
+    });
   </script>
 </body>
 </html>
