@@ -266,9 +266,24 @@ module.exports = async (req, res) => {
     const countryInfo = getCountryInfo(countryCode);
 
     // Use ONLY real API data - no estimates/fallbacks
+    // Numverify returns 'location' field, Abstract returns 'city' and 'region'
+    // Only use data that's actually a city/region (not country name repeated)
+    
+    const numverifyLocation = apiData.location && apiData.location !== apiData.country_name ? apiData.location : '';
+    const numverifyRegion = apiData.region && apiData.region !== apiData.country_name ? apiData.region : '';
+    
+    const abstractCity = abstractData?.phone_location?.city && 
+                         abstractData.phone_location.city !== abstractData.phone_location.country_name &&
+                         abstractData.phone_location.city.length < 25 
+                         ? abstractData.phone_location.city : '';
+    const abstractRegion = abstractData?.phone_location?.region && 
+                           abstractData.phone_location.region !== abstractData.phone_location.country_name &&
+                           abstractData.phone_location.region.length < 30
+                           ? abstractData.phone_location.region : '';
+
     const location = {
-      city: apiData.location || abstractData?.phone_location?.city || '',
-      region: apiData.region || abstractData?.phone_location?.region || ''
+      city: numverifyLocation || abstractCity || '',
+      region: numverifyRegion || abstractRegion || ''
     };
     
     const timezone = getTimezone(countryCode);
