@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PhoneSint - Professional phone number intelligence service">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>PhoneSint | Phone Intelligence</title>
+  
+  <!-- Fonts: Inter for modern, professional typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Phosphor Icons - Modern, professional icon set -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <style>
+    /* ============================================
+       CSS VARIABLES & RESET - SOFT BLACK THEME
+       ============================================ */
+    :root {
+      /* Soft Black Color Palette */
+      --color-bg-primary: #0a0a0a;
+      --color-bg-secondary: #111111;
+      --color-bg-tertiary: #1a1a1a;
+      --color-bg-elevated: #222222;
+      --color-bg-hover: #2a2a2a;
+      
+      --color-text-primary: #fafafa;
+      --color-text-secondary: #a0a0a0;
+      --color-text-tertiary: #666666;
+      --color-text-subtle: #444444;
+      
+      --color-border-primary: #222222;
+      --color-border-secondary: #333333;
+      --color-border-highlight: #444444;
+      
+      /* Accent - Soft Emerald */
+      --color-accent: #10b981;
+      --color-accent-hover: #059669;
+      --color-accent-glow: rgba(16, 185, 129, 0.15);
+      --color-accent-border: rgba(16, 185, 129, 0.3);
+      
+      /* Status Colors */
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-error: #ef4444;
+      --color-info: #06b6d4;
+      
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.6);
+      --shadow-lg: 0 10px 24px -4px rgba(0, 0, 0, 0.7);
+      --shadow-xl: 0 20px 40px -8px rgba(0, 0, 0, 0.8);
+      --shadow-glow: 0 0 30px var(--color-accent-glow);
+      --shadow-inner: inset 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+      
+      /* Spacing */
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      --spacing-2xl: 3rem;
+      --spacing-3xl: 4rem;
+      
+      /* Border Radius */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-full: 9999px;
+      
+      /* Transitions */
+      --transition-fast: 100ms ease;
+      --transition-base: 150ms ease;
+      --transition-slow: 250ms ease;
+      
+      /* Container */
+      --container-max: 1100px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+    }
+
+    .main-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============================================
+       HEADER
+       ============================================ */
+    .header {
+      background: rgba(17, 17, 17, 0.85);
+      border-bottom: 1px solid var(--color-border-primary);
+      padding: var(--spacing-md) 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      text-decoration: none;
+      transition: color var(--transition-base);
+    }
+
+    .logo:hover {
+      color: var(--color-accent);
+    }
+
+    .logo-icon {
+      font-size: 1.5rem;
+      color: var(--color-accent);
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: 0.75rem;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--color-success);
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 8px var(--color-success);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ============================================
+       HERO SECTION
+       ============================================ */
+    .hero {
+      padding: var(--spacing-3xl) 0 var(--spacing-2xl);
+      text-align: center;
+    }
+
+    .hero-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      margin-bottom: var(--spacing-lg);
+      background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-elevated) 100%);
+      border-radius: var(--radius-2xl);
+      border: 1px solid var(--color-border-secondary);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .hero-logo {
+      font-size: 2.5rem;
+      color: var(--color-accent);
+      filter: drop-shadow(0 0 20px var(--color-accent-glow));
+    }
+
+    .hero-title {
+      font-size: 2.75rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      color: var(--color-text-tertiary);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ============================================
+       SEARCH SECTION
+       ============================================ */
+    .search-section {
+      padding: 0 0 var(--spacing-2xl);
+    }
+
+    .search-card {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-primary);
+      border-radius: var(--radius-2xl);
+      padding: var(--spacing-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .search-form {
+      display: flex;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .input-group {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: var(--spacing-md);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.125rem;
+      color: var(--color-text-tertiary);
+      pointer-events: none;
+      transition: color var(--transition-base);
+    }
+
+    .phone-input {
+      width: 100%;
+      padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) calc(var(--spacing-md) + 2rem);
+      font-size: 0.9375rem;
+      font-family: inherit;
+      color: var(--color-text-primary);
+      background: var(--color-bg-primary);
+      border: 1px solid var(--color-border-primary);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-base);
+    }
+
+    .phone-input::placeholder {
+      color: var(--color-text-subtle);
+    }
+
+    .phone-input:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+
+    .phone-input:focus + .input-icon {
+      color: var(--color-accent);
+    }
+
+    .phone-input.error {
+      border-color: var(--color-error);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+
+    .search-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md) var(--spacing-xl);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--color-text-primary);
+      background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    }
+
+    .search-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+
+    .search-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .search-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .search-btn .btn-icon {
+      font-size: 1.125rem;
+    }
+
+    .search-btn.loading .btn-text {
+      display: none;
+    }
+
+    .search-btn.loading .btn-spinner {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ============================================
+       ERROR MESSAGE
+       ============================================ */
+    .error-message {
+      display: none;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md) var(--spacing-lg);
+      margin-top: var(--spacing-md);
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: var(--radius-md);
+      color: var(--color-error);
+      font-size: 0.8125rem;
+    }
+
+    .error-message.visible {
+      display: flex;
+    }
+
+    /* ============================================
+       RESULTS SECTION
+       ============================================ */
+    .results-section {
+      padding: 0 0 var(--spacing-2xl);
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .results-section.visible {
+      display: block;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-lg);
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+
+    .results-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      color: var(--color-text-primary);
+    }
+
+    .results-title-icon {
+      color: var(--color-accent);
+    }
+
+    .clear-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--color-text-tertiary);
+      background: transparent;
+      border: 1px solid var(--color-border-primary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    .clear-btn:hover {
+      color: var(--color-text-primary);
+      border-color: var(--color-border-highlight);
+      background: var(--color-bg-tertiary);
+    }
+
+    /* ============================================
+       RESULTS GRID
+       ============================================ */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .result-card {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-primary);
+      border-radius: var(--radius-2xl);
+      padding: var(--spacing-xl);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+    }
+
+    .result-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      border-color: var(--color-accent-border);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border-primary);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg-tertiary);
+      border-radius: var(--radius-lg);
+      font-size: 1.25rem;
+      color: var(--color-accent);
+      border: 1px solid var(--color-border-primary);
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .card-subtitle {
+      font-size: 0.75rem;
+      color: var(--color-text-subtle);
+      margin-top: 2px;
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--spacing-md);
+      padding: var(--spacing-sm) 0;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: var(--color-text-tertiary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .info-value {
+      font-size: 0.875rem;
+      color: var(--color-text-primary);
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .info-value.muted {
+      color: var(--color-text-tertiary);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      border-radius: var(--radius-full);
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--color-success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--color-warning);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .badge-info {
+      background: rgba(6, 182, 212, 0.12);
+      color: var(--color-info);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    /* ============================================
+       DEVICE CARD SPECIFIC
+       ============================================ */
+    .device-preview {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md);
+      background: var(--color-bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border-primary);
+    }
+
+    .device-icon {
+      font-size: 1.75rem;
+      color: var(--color-accent);
+    }
+
+    .device-details {
+      flex: 1;
+    }
+
+    .device-name {
+      font-weight: 600;
+      color: var(--color-text-primary);
+      font-size: 0.9375rem;
+    }
+
+    .device-os {
+      font-size: 0.75rem;
+      color: var(--color-text-subtle);
+      margin-top: 2px;
+    }
+
+    /* ============================================
+       CREDITS SECTION
+       ============================================ */
+    .credits-section {
+      margin-top: var(--spacing-2xl);
+      padding: var(--spacing-xl);
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-primary);
+      border-radius: var(--radius-2xl);
+    }
+
+    .credits-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .credits-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+
+    .credit-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--color-bg-primary);
+      border-radius: var(--radius-md);
+      font-size: 0.8125rem;
+      color: var(--color-text-tertiary);
+      border: 1px solid var(--color-border-primary);
+    }
+
+    .credit-icon {
+      font-size: 1rem;
+      color: var(--color-accent);
+    }
+
+    .credit-item strong {
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    .footer {
+      margin-top: auto;
+      padding: var(--spacing-2xl) 0 var(--spacing-xl);
+      border-top: 1px solid var(--color-border-primary);
+      background: var(--color-bg-secondary);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-md);
+      text-align: center;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+
+    .footer-brand-icon {
+      color: var(--color-accent);
+      font-size: 1.25rem;
+    }
+
+    .footer-text {
+      font-size: 0.8125rem;
+      color: var(--color-text-subtle);
+    }
+
+    .footer-credits {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: var(--spacing-sm);
+    }
+
+    .footer-credit {
+      font-size: 0.75rem;
+      color: var(--color-text-tertiary);
+    }
+
+    .footer-credit strong {
+      color: var(--color-text-secondary);
+      font-weight: 500;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: var(--spacing-md);
+    }
+
+    .footer-link {
+      font-size: 0.8125rem;
+      color: var(--color-text-tertiary);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .footer-link:hover {
+      color: var(--color-accent);
+    }
+
+    .disclaimer {
+      max-width: 550px;
+      font-size: 0.75rem;
+      color: var(--color-text-subtle);
+      line-height: 1.7;
+      margin-top: var(--spacing-md);
+      padding: var(--spacing-md);
+      background: var(--color-bg-primary);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border-primary);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 1.875rem;
+      }
+
+      .hero-subtitle {
+        font-size: 0.9375rem;
+      }
+
+      .search-form {
+        flex-direction: column;
+      }
+
+      .input-group {
+        min-width: 100%;
+      }
+
+      .search-btn {
+        width: 100%;
+      }
+
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-credits {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <a href="/" class="logo">
+            <i class="ph ph-shield-check logo-icon"></i>
+            <span>PhoneSint</span>
+          </a>
+          <div class="header-status">
+            <span class="status-dot"></span>
+            <span>Secure</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-brand">
+          <i class="ph ph-shield-check hero-logo"></i>
+        </div>
+        <h1 class="hero-title">PhoneSint</h1>
+        <p class="hero-subtitle">
+          Professional phone intelligence with secure carrier detection, 
+          location estimation, and device profiling.
+        </p>
+      </section>
+
+      <!-- Search Section -->
+      <section class="search-section">
+        <div class="search-card">
+          <form class="search-form" id="searchForm">
+            <div class="input-group">
+              <i class="ph ph-globe input-icon"></i>
+              <input 
+                type="tel" 
+                class="phone-input" 
+                id="phoneInput"
+                placeholder="+1 (555) 123-4567"
+                autocomplete="off"
+                required
+                pattern="^\+\d{10,15}$"
+              >
+            </div>
+            <button type="submit" class="search-btn" id="searchBtn">
+              <span class="btn-text">Analyze</span>
+              <i class="ph ph-spinner btn-spinner" style="display: none;"></i>
+              <i class="ph ph-shield-check btn-icon"></i>
+            </button>
+          </form>
+          <div class="error-message" id="errorMessage">
+            <i class="ph ph-warning-circle"></i>
+            <span id="errorText"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results Section -->
+      <section class="results-section" id="resultsSection">
+        <div class="results-header">
+          <h2 class="results-title">
+            <i class="ph ph-check-circle results-title-icon"></i>
+            Analysis Results
+          </h2>
+          <button class="clear-btn" id="clearBtn">
+            <i class="ph ph-x"></i>
+            Clear
+          </button>
+        </div>
+
+        <div class="results-grid">
+          <!-- Owner Card -->
+          <div class="result-card">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="ph ph-user"></i>
+              </div>
+              <div>
+                <h3 class="card-title">Owner</h3>
+                <p class="card-subtitle">Registered details</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="info-row">
+                <span class="info-label">Name</span>
+                <span class="info-value" id="ownerName">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Type</span>
+                <span class="badge badge-info" id="ownerStatus">Simulated</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone Details Card -->
+          <div class="result-card">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="ph ph-map-pin"></i>
+              </div>
+              <div>
+                <h3 class="card-title">Details</h3>
+                <p class="card-subtitle">Carrier & location</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="info-row">
+                <span class="info-label">Country</span>
+                <span class="info-value" id="country">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Code</span>
+                <span class="info-value" id="countryCode">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Carrier</span>
+                <span class="info-value" id="carrier">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Type</span>
+                <span class="info-value" id="lineType">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Location</span>
+                <span class="info-value" id="location">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Device Card -->
+          <div class="result-card">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="ph ph-device-mobile"></i>
+              </div>
+              <div>
+                <h3 class="card-title">Device</h3>
+                <p class="card-subtitle">Estimated device</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="device-preview">
+                <i class="ph ph-device-mobile device-icon"></i>
+                <div class="device-details">
+                  <div class="device-name" id="deviceName">-</div>
+                  <div class="device-os" id="deviceOs">-</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Type</span>
+                <span class="info-value" id="deviceType">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Brand</span>
+                <span class="info-value" id="deviceBrand">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Credits Section -->
+        <div class="credits-section">
+          <h4 class="credits-title">Credits</h4>
+          <div class="credits-grid">
+            <div class="credit-item">
+              <i class="ph ph-lightbulb credit-icon"></i>
+              <span>Idea: <strong id="creditIdea">-</strong></span>
+            </div>
+            <div class="credit-item">
+              <i class="ph ph-code credit-icon"></i>
+              <span>Coding: <strong id="creditCoding">-</strong></span>
+            </div>
+            <div class="credit-item">
+              <i class="ph ph-globe credit-icon"></i>
+              <span>Website: <strong id="creditWebsite">-</strong></span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <i class="ph ph-shield-check footer-brand-icon"></i>
+            <span>PhoneSint</span>
+          </div>
+          <p class="footer-text">
+            &copy; 2026 PhoneSint. All rights reserved.
+          </p>
+          <div class="footer-credits">
+            <div class="footer-credit">Idea: <strong>Ytx12</strong></div>
+            <div class="footer-credit">Coding: <strong>terror._1</strong></div>
+            <div class="footer-credit">Website: <strong>qvfear</strong></div>
+          </div>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Privacy</a>
+            <a href="#" class="footer-link">Terms</a>
+            <a href="#" class="footer-link">API</a>
+          </div>
+          <div class="disclaimer">
+            <strong>Security Notice:</strong> All API communications are encrypted. 
+            Owner information is simulated for demonstration purposes only. 
+            Carrier and country data fetched via secure API.
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const state = { isLoading: false, currentData: null };
+
+    const elements = {
+      searchForm: document.getElementById('searchForm'),
+      phoneInput: document.getElementById('phoneInput'),
+      searchBtn: document.getElementById('searchBtn'),
+      errorMessage: document.getElementById('errorMessage'),
+      errorText: document.getElementById('errorText'),
+      resultsSection: document.getElementById('resultsSection'),
+      clearBtn: document.getElementById('clearBtn'),
+      ownerName: document.getElementById('ownerName'),
+      ownerStatus: document.getElementById('ownerStatus'),
+      country: document.getElementById('country'),
+      countryCode: document.getElementById('countryCode'),
+      carrier: document.getElementById('carrier'),
+      lineType: document.getElementById('lineType'),
+      location: document.getElementById('location'),
+      deviceName: document.getElementById('deviceName'),
+      deviceOs: document.getElementById('deviceOs'),
+      deviceType: document.getElementById('deviceType'),
+      deviceBrand: document.getElementById('deviceBrand'),
+      creditIdea: document.getElementById('creditIdea'),
+      creditCoding: document.getElementById('creditCoding'),
+      creditWebsite: document.getElementById('creditWebsite'),
+    };
+
+    function setLoading(isLoading) {
+      state.isLoading = isLoading;
+      if (isLoading) {
+        elements.searchBtn.classList.add('loading');
+        elements.searchBtn.disabled = true;
+        elements.searchBtn.querySelector('.btn-spinner').style.display = 'inline-block';
+        elements.searchBtn.querySelector('.btn-icon').style.display = 'none';
+      } else {
+        elements.searchBtn.classList.remove('loading');
+        elements.searchBtn.disabled = false;
+        elements.searchBtn.querySelector('.btn-spinner').style.display = 'none';
+        elements.searchBtn.querySelector('.btn-icon').style.display = 'inline-block';
+      }
+    }
+
+    function showError(message) {
+      elements.errorText.textContent = message;
+      elements.errorMessage.classList.add('visible');
+      elements.phoneInput.classList.add('error');
+    }
+
+    function hideError() {
+      elements.errorMessage.classList.remove('visible');
+      elements.phoneInput.classList.remove('error');
+    }
+
+    function clearResults() {
+      elements.resultsSection.classList.remove('visible');
+      elements.phoneInput.value = '';
+      state.currentData = null;
+      hideError();
+      elements.phoneInput.focus();
+    }
+
+    function formatLocation(location) {
+      if (!location || location.city === 'Unknown') return 'Unknown';
+      return `${location.city}, ${location.region}`;
+    }
+
+    function formatDeviceName(device) {
+      return `${device.brand} ${device.model}`;
+    }
+
+    function displayResults(data) {
+      elements.ownerName.textContent = data.owner.fullName;
+      elements.country.textContent = data.phoneDetails.country;
+      elements.countryCode.textContent = data.phoneDetails.countryCode;
+      elements.carrier.textContent = data.phoneDetails.carrier;
+      elements.lineType.textContent = data.phoneDetails.lineType;
+      elements.location.textContent = formatLocation(data.phoneDetails.location);
+      elements.deviceName.textContent = formatDeviceName(data.device);
+      elements.deviceOs.textContent = data.device.os;
+      elements.deviceType.textContent = data.device.type;
+      elements.deviceBrand.textContent = data.device.brand;
+      elements.creditIdea.textContent = data.credits.idea;
+      elements.creditCoding.textContent = data.credits.coding;
+      elements.creditWebsite.textContent = data.credits.website;
+      elements.resultsSection.classList.add('visible');
+      elements.resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function lookupPhoneNumber(number) {
+      const response = await fetch(`/api/phone-info/${encodeURIComponent(number)}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        credentials: 'same-origin',
+        cache: 'no-store',
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to lookup phone number');
+      return data;
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const phoneNumber = elements.phoneInput.value.trim();
+      if (!phoneNumber) { showError('Please enter a phone number'); return; }
+      const phoneRegex = /^\+\d{10,15}$/;
+      if (!phoneRegex.test(phoneNumber)) {
+        showError('Invalid format. Use international format (e.g., +14155552671)');
+        return;
+      }
+      hideError();
+      setLoading(true);
+      try {
+        const data = await lookupPhoneNumber(phoneNumber);
+        state.currentData = data;
+        displayResults(data);
+      } catch (error) {
+        showError(error.message || 'An error occurred. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    elements.searchForm.addEventListener('submit', handleSubmit);
+    elements.clearBtn.addEventListener('click', clearResults);
+    elements.phoneInput.addEventListener('input', hideError);
+    elements.phoneInput.addEventListener('blur', () => {
+      let value = elements.phoneInput.value.trim();
+      if (value && !value.startsWith('+')) {
+        value = '+' + value.replace(/[^\d]/g, '');
+        elements.phoneInput.value = value;
+      }
+    });
+
+    console.log('PhoneSint initialized');
+  </script>
+</body>
+</html>

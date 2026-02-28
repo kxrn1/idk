@@ -1,0 +1,76 @@
+# ============================================
+# DEPENDENCIES
+# ============================================
+node_modules/
+.pnp
+.pnp.js
+
+# ============================================
+# ENVIRONMENT VARIABLES
+# ============================================
+# .env is gitignored by default for security
+# For Vercel deployment WITHOUT using their env vars:
+# - Remove .env from .gitignore (comment out the line below)
+# - ONLY do this for PRIVATE repositories
+# - NEVER commit .env to public repos
+#.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============================================
+# LOGS
+# ============================================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ============================================
+# OS FILES
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ============================================
+# IDE / EDITOR
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# BUILD OUTPUTS
+# ============================================
+dist/
+build/
+.next/
+out/
+
+# ============================================
+# TESTING
+# ============================================
+coverage/
+.nyc_output/
+
+# ============================================
+# MISCELLANEOUS
+# ============================================
+*.pem
+*.key
+.vercel
