@@ -280,20 +280,29 @@ module.exports = async (req, res) => {
     
     const defaultLocation = locationEstimates[countryCode] || { city: '', region: '' };
     
-    // Only use apiData.city if it's clearly a city (not country/region name)
-    // Reject if city equals country_name, or if city equals region, or if both are same
-    const isCityValid = apiData.city && 
+    // Validate Numverify city/region
+    const isNumverifyCityValid = apiData.city && 
                         apiData.city !== apiData.country_name && 
                         apiData.city !== apiData.region &&
-                        apiData.city.length < 20; // Cities are usually shorter names
+                        apiData.city.length < 20;
     
-    const isRegionValid = apiData.region && 
+    const isNumverifyRegionValid = apiData.region && 
                           apiData.region !== apiData.country_name &&
                           apiData.region.length < 30;
     
+    // Validate Abstract API city/region (they often return country name as city)
+    const isAbstractCityValid = abstractData?.phone_location?.city &&
+                        abstractData.phone_location.city !== abstractData.phone_location.country_name &&
+                        abstractData.phone_location.city !== abstractData.phone_location.region &&
+                        abstractData.phone_location.city.length < 20;
+    
+    const isAbstractRegionValid = abstractData?.phone_location?.region &&
+                          abstractData.phone_location.region !== abstractData.phone_location.country_name &&
+                          abstractData.phone_location.region.length < 30;
+    
     const location = {
-      city: abstractData?.phone_location?.city || (isCityValid ? apiData.city : '') || defaultLocation.city,
-      region: abstractData?.phone_location?.region || (isRegionValid ? apiData.region : '') || defaultLocation.region
+      city: (isAbstractCityValid ? abstractData.phone_location.city : '') || (isNumverifyCityValid ? apiData.city : '') || defaultLocation.city,
+      region: (isAbstractRegionValid ? abstractData.phone_location.region : '') || (isNumverifyRegionValid ? apiData.region : '') || defaultLocation.region
     };
     
     const timezone = getTimezone(countryCode);
