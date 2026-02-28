@@ -298,7 +298,7 @@ module.exports = async (req, res) => {
         country: abstractData?.phone_location?.country_name || apiData.country_name || 'Unknown',
         countryCode: countryCode,
         location,
-        carrier: abstractData?.phone_carrier?.name || apiData.carrier || 'Unknown',
+        carrier: apiData.carrier || abstractData?.phone_carrier?.name || 'Unknown',
         lineType: abstractData?.phone_carrier?.line_type || apiData.line_type || 'Unknown',
         lineTypeIcon: getLineTypeIcon(abstractData?.phone_carrier?.line_type || apiData.line_type),
         lineTypeLabel: getLineTypeLabel(abstractData?.phone_carrier?.line_type || apiData.line_type),
