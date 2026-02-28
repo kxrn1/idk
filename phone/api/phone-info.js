@@ -280,13 +280,20 @@ module.exports = async (req, res) => {
     
     const defaultLocation = locationEstimates[countryCode] || { city: '', region: '' };
     
-    // Only use apiData.city if it's a real city (not country name)
-    const apiCity = (apiData.city && apiData.city !== apiData.country_name && apiData.city.length < apiData.country_name.length) ? apiData.city : '';
-    const apiRegion = (apiData.region && apiData.region !== apiData.country_name) ? apiData.region : '';
+    // Only use apiData.city if it's clearly a city (not country/region name)
+    // Reject if city equals country_name, or if city equals region, or if both are same
+    const isCityValid = apiData.city && 
+                        apiData.city !== apiData.country_name && 
+                        apiData.city !== apiData.region &&
+                        apiData.city.length < 20; // Cities are usually shorter names
+    
+    const isRegionValid = apiData.region && 
+                          apiData.region !== apiData.country_name &&
+                          apiData.region.length < 30;
     
     const location = {
-      city: abstractData?.phone_location?.city || apiCity || defaultLocation.city,
-      region: abstractData?.phone_location?.region || apiRegion || defaultLocation.region
+      city: abstractData?.phone_location?.city || (isCityValid ? apiData.city : '') || defaultLocation.city,
+      region: abstractData?.phone_location?.region || (isRegionValid ? apiData.region : '') || defaultLocation.region
     };
     
     const timezone = getTimezone(countryCode);
