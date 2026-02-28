@@ -280,28 +280,27 @@ module.exports = async (req, res) => {
     
     const defaultLocation = locationEstimates[countryCode] || { city: '', region: '' };
     
-    // Validate Numverify city/region
-    const isNumverifyCityValid = apiData.city && 
-                        apiData.city !== apiData.country_name && 
-                        apiData.city !== apiData.region &&
-                        apiData.city.length < 20;
-    
-    const isNumverifyRegionValid = apiData.region && 
+    // Validate Numverify city/region (Numverify returns 'location' field with city name)
+    const isNumverifyCityValid = apiData.location &&
+                        apiData.location !== apiData.country_name &&
+                        apiData.location.length < 30;
+
+    const isNumverifyRegionValid = apiData.region &&
                           apiData.region !== apiData.country_name &&
                           apiData.region.length < 30;
-    
+
     // Validate Abstract API city/region (they often return country name as city)
     const isAbstractCityValid = abstractData?.phone_location?.city &&
                         abstractData.phone_location.city !== abstractData.phone_location.country_name &&
                         abstractData.phone_location.city !== abstractData.phone_location.region &&
                         abstractData.phone_location.city.length < 20;
-    
+
     const isAbstractRegionValid = abstractData?.phone_location?.region &&
                           abstractData.phone_location.region !== abstractData.phone_location.country_name &&
                           abstractData.phone_location.region.length < 30;
-    
+
     const location = {
-      city: (isAbstractCityValid ? abstractData.phone_location.city : '') || (isNumverifyCityValid ? apiData.city : '') || defaultLocation.city,
+      city: (isAbstractCityValid ? abstractData.phone_location.city : '') || (isNumverifyCityValid ? apiData.location : '') || defaultLocation.city,
       region: (isAbstractRegionValid ? abstractData.phone_location.region : '') || (isNumverifyRegionValid ? apiData.region : '') || defaultLocation.region
     };
     
@@ -325,8 +324,8 @@ module.exports = async (req, res) => {
         timezoneOffset: timezoneOffset,
         internationalPrefix: '00 or +',
         numberComponents: {
-          nationalFormat: abstractData?.phone_format?.national || components.nationalFormat,
-          internationalFormat: abstractData?.phone_format?.international || components.internationalFormat,
+          nationalFormat: abstractData?.phone_format?.national || apiData.local_format || components.nationalFormat,
+          internationalFormat: abstractData?.phone_format?.international || apiData.international_format || components.internationalFormat,
           areaCode: components.areaCode,
           subscriberNumber: components.subscriberNumber,
           areaCodeLength: components.areaCodeLength
