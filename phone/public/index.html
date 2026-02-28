@@ -1090,15 +1090,17 @@ Generated: ${new Date().toLocaleString()}
       elements.carrier.textContent = pd.carrier;
       elements.lineType.innerHTML = `${pd.lineTypeIcon || '❓'} ${pd.lineTypeLabel}`;
       
-      // Fix location to show detailed info
-      const city = pd.location?.city || 'Unknown';
+      // Fix location to show real API data only
+      const city = pd.location?.city || '';
       const region = pd.location?.region || '';
-      if (city !== 'Unknown' && region && city !== region) {
+      if (city && region) {
         elements.location.textContent = `${city}, ${region}`;
-      } else if (city !== 'Unknown') {
+      } else if (city) {
         elements.location.textContent = city;
+      } else if (region) {
+        elements.location.textContent = region;
       } else {
-        elements.location.textContent = pd.country || 'Unknown';
+        elements.location.textContent = 'Not available';
       }
 
       // Number Formats

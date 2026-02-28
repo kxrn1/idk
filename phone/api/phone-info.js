@@ -265,48 +265,10 @@ module.exports = async (req, res) => {
     const countryCode = apiData.country_code || abstractData?.phone_location?.country_code || 'US';
     const countryInfo = getCountryInfo(countryCode);
 
-    // Get detailed location from API with fallbacks
-    const carrier = abstractData?.phone_carrier?.name || apiData.carrier || '';
-    
-    // Location estimates based on carrier and country
-    const locationEstimates = {
-      'NP': { city: 'Kathmandu', region: 'Bagmati' },
-      'US': { city: 'New York', region: 'NY' },
-      'GB': { city: 'London', region: 'England' },
-      'IN': { city: 'New Delhi', region: 'Delhi' },
-      'PK': { city: 'Islamabad', region: 'Islamabad' },
-      'BD': { city: 'Dhaka', region: 'Dhaka' },
-    };
-    
-    const defaultLocation = locationEstimates[countryCode] || { city: '', region: '' };
-    
-    // Validate Numverify city/region (Numverify returns 'location' field with city name)
-    const isNumverifyCityValid = apiData.location &&
-                        apiData.location !== apiData.country_name &&
-                        apiData.location.length < 30;
-
-    const isNumverifyRegionValid = apiData.region &&
-                          apiData.region !== apiData.country_name &&
-                          apiData.region.length < 30;
-
-    // Validate Abstract API city/region (they often swap city/state for US numbers)
-    // For US: city is often state name, region is actual city
-    const isAbstractCityValid = abstractData?.phone_location?.city &&
-                        abstractData.phone_location.city !== abstractData.phone_location.country_name &&
-                        abstractData.phone_location.city.length < 25;
-
-    const isAbstractRegionValid = abstractData?.phone_location?.region &&
-                          abstractData.phone_location.region !== abstractData.phone_location.country_name &&
-                          abstractData.phone_location.region.length < 30;
-
-    // For US numbers, Abstract API often returns state as city and city as region
-    const isUS = countryCode === 'US';
-    const abstractCity = isUS && abstractData?.phone_location?.region ? abstractData.phone_location.region : (isAbstractCityValid ? abstractData.phone_location.city : '');
-    const abstractRegion = isUS && abstractData?.phone_location?.city && abstractData.phone_location.city.length < 20 ? abstractData.phone_location.city : (isAbstractRegionValid ? abstractData.phone_location.region : '');
-
+    // Use ONLY real API data - no estimates/fallbacks
     const location = {
-      city: abstractCity || (isNumverifyCityValid ? apiData.location : '') || defaultLocation.city,
-      region: abstractRegion || (isNumverifyRegionValid ? apiData.region : '') || defaultLocation.region
+      city: apiData.location || abstractData?.phone_location?.city || '',
+      region: apiData.region || abstractData?.phone_location?.region || ''
     };
     
     const timezone = getTimezone(countryCode);
