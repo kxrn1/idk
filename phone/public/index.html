@@ -21,12 +21,18 @@
   <meta property="twitter:description" content="Professional phone number lookup service.">
   
   <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PhoneSint">
+  <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📞</text></svg>">
+  <link rel="apple-touch-icon" href="/icon-192.png">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   
   <style>
     :root {
@@ -255,6 +261,33 @@
     .info-label { font-size: 0.6875rem; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.025em; }
     .info-value { font-size: 0.875rem; font-weight: 500; text-align: right; display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
     .info-value.na { color: var(--text-muted); font-style: italic; }
+    
+    .copy-btn {
+      padding: 4px 8px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 150ms ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .copy-btn:hover {
+      background: var(--bg);
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
+    .copy-btn.copied {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
 
     .format-box {
       background: var(--bg-tertiary);
@@ -477,6 +510,9 @@
             <span id="resultNumber">-</span>
           </h2>
           <div class="action-buttons">
+            <button class="action-btn" id="exportBtn">
+              <i class="ph ph-download-simple"></i> Export
+            </button>
             <button class="action-btn" id="shareBtn">
               <i class="ph ph-share-network"></i> Share
             </button>
@@ -500,6 +536,46 @@
             <div class="time-label" id="currentDate">-</div>
           </div>
 
+          <!-- Statistics Dashboard -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-chart-bar"></i></div>
+              <div>
+                <h3 class="card-title">Statistics</h3>
+                <p class="card-subtitle">Your activity</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="info-row">
+                <span class="info-label">Total Searches</span>
+                <span class="info-value" id="totalSearches">0</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Top Country</span>
+                <span class="info-value" id="topCountry">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Last Search</span>
+                <span class="info-value" id="lastSearch">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- QR Code -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-qr-code"></i></div>
+              <div>
+                <h3 class="card-title">QR Code</h3>
+                <p class="card-subtitle">Scan to save</p>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: center; padding: 16px;">
+              <canvas id="qrCode" style="max-width: 150px; height: auto;"></canvas>
+            </div>
+            <div class="time-label">Scan to dial number</div>
+          </div>
+
           <!-- Phone Details -->
           <div class="bento-card">
             <div class="card-header">
@@ -512,15 +588,24 @@
             <div class="card-content">
               <div class="info-row">
                 <span class="info-label">Country</span>
-                <span class="info-value" id="country">-</span>
+                <span class="info-value">
+                  <span id="country">-</span>
+                  <button class="copy-btn" data-copy="country" title="Copy country"><i class="ph ph-copy"></i></button>
+                </span>
               </div>
               <div class="info-row">
                 <span class="info-label">Code</span>
-                <span class="info-value" id="countryCode">-</span>
+                <span class="info-value">
+                  <span id="countryCode">-</span>
+                  <button class="copy-btn" data-copy="countryCode" title="Copy code"><i class="ph ph-copy"></i></button>
+                </span>
               </div>
               <div class="info-row">
                 <span class="info-label">Carrier</span>
-                <span class="info-value" id="carrier">-</span>
+                <span class="info-value">
+                  <span id="carrier">-</span>
+                  <button class="copy-btn" data-copy="carrier" title="Copy carrier"><i class="ph ph-copy"></i></button>
+                </span>
               </div>
               <div class="info-row">
                 <span class="info-label">Line Type</span>
@@ -528,7 +613,10 @@
               </div>
               <div class="info-row">
                 <span class="info-label">Location</span>
-                <span class="info-value" id="location">-</span>
+                <span class="info-value">
+                  <span id="location">-</span>
+                  <button class="copy-btn" data-copy="location" title="Copy location"><i class="ph ph-copy"></i></button>
+                </span>
               </div>
             </div>
           </div>
@@ -545,11 +633,17 @@
             <div class="card-content">
               <div class="format-box">
                 <div class="format-label">National</div>
-                <div class="format-value" id="nationalFormat">-</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="format-value" id="nationalFormat">-</div>
+                  <button class="copy-btn" data-copy="nationalFormat" title="Copy"><i class="ph ph-copy"></i></button>
+                </div>
               </div>
               <div class="format-box">
                 <div class="format-label">International</div>
-                <div class="format-value" id="internationalFormat">-</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="format-value" id="internationalFormat">-</div>
+                  <button class="copy-btn" data-copy="internationalFormat" title="Copy"><i class="ph ph-copy"></i></button>
+                </div>
               </div>
             </div>
           </div>
@@ -705,9 +799,28 @@
           <button class="modal-close" id="closeShareModal"><i class="ph ph-x"></i></button>
         </div>
         <div class="share-url" id="shareUrl">-</div>
-        <button class="copy-btn" id="copyUrlBtn">
+        <button class="copy-btn" id="copyUrlBtn" style="width: 100%; justify-content: center; padding: 12px;">
           <i class="ph ph-copy"></i> Copy Link
         </button>
+      </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Export Results</h3>
+          <button class="modal-close" id="closeExportModal"><i class="ph ph-x"></i></button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 16px;">Choose format to download:</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="action-btn" id="exportJsonBtn" style="justify-content: center;">
+            <i class="ph ph-file-code"></i> JSON
+          </button>
+          <button class="action-btn" id="exportTxtBtn" style="justify-content: center;">
+            <i class="ph ph-file-text"></i> Text (.txt)
+          </button>
+        </div>
       </div>
     </div>
 
@@ -740,10 +853,15 @@
       errorText: document.getElementById('errorText'),
       newSearchBtn: document.getElementById('newSearchBtn'),
       shareBtn: document.getElementById('shareBtn'),
+      exportBtn: document.getElementById('exportBtn'),
       shareModal: document.getElementById('shareModal'),
+      exportModal: document.getElementById('exportModal'),
       closeShareModal: document.getElementById('closeShareModal'),
+      closeExportModal: document.getElementById('closeExportModal'),
       copyUrlBtn: document.getElementById('copyUrlBtn'),
       shareUrl: document.getElementById('shareUrl'),
+      exportJsonBtn: document.getElementById('exportJsonBtn'),
+      exportTxtBtn: document.getElementById('exportTxtBtn'),
       resultFlag: document.getElementById('resultFlag'),
       resultNumber: document.getElementById('resultNumber'),
       currentTime: document.getElementById('currentTime'),
@@ -773,11 +891,174 @@
       totalBreaches: document.getElementById('totalBreaches'),
       firstBreach: document.getElementById('firstBreach'),
       lastBreach: document.getElementById('lastBreach'),
+      totalSearches: document.getElementById('totalSearches'),
+      topCountry: document.getElementById('topCountry'),
+      lastSearch: document.getElementById('lastSearch'),
+      qrCode: document.getElementById('qrCode'),
     };
 
     let currentTimezone = null;
     let currentNumber = null;
     let timeInterval = null;
+    let currentData = null;
+
+    // Statistics functions
+    function getStats() {
+      try {
+        return JSON.parse(localStorage.getItem('phonesint_stats') || '{"searches": 0, "countries": {}, "lastSearch": null}');
+      } catch {
+        return { searches: 0, countries: {}, lastSearch: null };
+      }
+    }
+
+    function saveStats(country) {
+      const stats = getStats();
+      stats.searches++;
+      if (country) {
+        stats.countries[country] = (stats.countries[country] || 0) + 1;
+      }
+      stats.lastSearch = new Date().toISOString();
+      localStorage.setItem('phonesint_stats', JSON.stringify(stats));
+      updateStatsDisplay(stats);
+    }
+
+    function updateStatsDisplay(stats) {
+      elements.totalSearches.textContent = stats.searches;
+      
+      // Find top country
+      const topCountry = Object.entries(stats.countries).sort((a, b) => b[1] - a[1])[0];
+      elements.topCountry.textContent = topCountry ? topCountry[0] : '-';
+      
+      // Last search
+      if (stats.lastSearch) {
+        const date = new Date(stats.lastSearch);
+        elements.lastSearch.textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+    }
+
+    // Copy function
+    async function copyToClipboard(text, btn) {
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.classList.add('copied');
+        btn.innerHTML = '<i class="ph ph-check"></i>';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = '<i class="ph ph-copy"></i>';
+        }, 2000);
+      } catch {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        btn.classList.add('copied');
+        btn.innerHTML = '<i class="ph ph-check"></i>';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = '<i class="ph ph-copy"></i>';
+        }, 2000);
+      }
+    }
+
+    // Export functions
+    function exportAsJson(data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `phonesint-${data.inputNumber}-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportAsTxt(data) {
+      const pd = data.phoneDetails;
+      const content = `PhoneSint Lookup Results
+========================
+Number: ${data.inputNumber}
+Country: ${pd.country} (${pd.countryCode})
+Carrier: ${pd.carrier}
+Line Type: ${pd.lineTypeLabel}
+Location: ${pd.location.city}, ${pd.location.region}
+Timezone: ${pd.timezone} (${pd.timezoneOffset})
+
+Number Formats:
+- National: ${pd.numberComponents.nationalFormat}
+- International: ${pd.numberComponents.internationalFormat}
+- Area Code: ${pd.numberComponents.areaCode} (${pd.numberComponents.areaCodeLength})
+- Subscriber: ${pd.numberComponents.subscriberNumber}
+
+Country Info:
+- Capital: ${data.countryInfo.capital}
+- Languages: ${data.countryInfo.languages}
+- Currency: ${data.countryInfo.currency}
+- Emergency: ${data.countryInfo.emergencyNumbers}
+
+Validation:
+- Valid: ${data.validation.isValid}
+- Line Status: ${data.validation.lineStatus}
+- Is VoIP: ${data.validation.isVoip}
+
+Risk Assessment:
+- Risk Level: ${data.risk.level}
+- Disposable: ${data.risk.isDisposable}
+- Abuse Detected: ${data.risk.isAbuseDetected}
+
+Generated: ${new Date().toLocaleString()}
+`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `phonesint-${data.inputNumber}-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // QR Code generation
+    function generateQRCode(number) {
+      if (!elements.qrCode || !window.QRCode) return;
+      try {
+        QRCode.toCanvas(elements.qrCode, `tel:${number}`, {
+          width: 150,
+          margin: 2,
+          color: {
+            dark: '#ffffff',
+            light: '#000000'
+          }
+        });
+      } catch (e) {
+        console.error('QR Code generation failed:', e);
+      }
+    }
+
+    // Keyboard shortcuts
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Ctrl+K or Cmd+K - Focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          elements.phoneInput.focus();
+          elements.phoneInput.select();
+        }
+        // Escape - Clear and reset
+        if (e.key === 'Escape') {
+          if (elements.shareModal.classList.contains('visible')) {
+            closeShareModal();
+          } else if (elements.exportModal.classList.contains('visible')) {
+            closeExportModal();
+          } else if (!elements.searchContainer.classList.contains('hidden')) {
+            elements.phoneInput.blur();
+          } else {
+            newSearch();
+          }
+        }
+        // Enter in search input - trigger search (already handled by form)
+      });
+    }
 
     function setLoading(isLoading) {
       if (isLoading) {
@@ -924,6 +1205,15 @@
 
       elements.searchContainer.classList.add('hidden');
       elements.resultsContainer.classList.add('visible');
+      
+      // Save statistics
+      saveStats(pd.country);
+      
+      // Generate QR code
+      generateQRCode(data.inputNumber);
+      
+      // Store current data for export
+      currentData = data;
     }
 
     function newSearch() {
@@ -1017,11 +1307,37 @@
     elements.searchForm.addEventListener('submit', handleSubmit);
     elements.newSearchBtn.addEventListener('click', newSearch);
     elements.shareBtn.addEventListener('click', openShareModal);
+    elements.exportBtn.addEventListener('click', () => elements.exportModal.classList.add('visible'));
     elements.closeShareModal.addEventListener('click', closeShareModal);
+    elements.closeExportModal.addEventListener('click', () => elements.exportModal.classList.remove('visible'));
     elements.copyUrlBtn.addEventListener('click', copyUrl);
+    elements.exportJsonBtn.addEventListener('click', () => {
+      if (currentData) exportAsJson(currentData);
+      elements.exportModal.classList.remove('visible');
+    });
+    elements.exportTxtBtn.addEventListener('click', () => {
+      if (currentData) exportAsTxt(currentData);
+      elements.exportModal.classList.remove('visible');
+    });
     elements.shareModal.addEventListener('click', (e) => {
       if (e.target === elements.shareModal) closeShareModal();
     });
+    elements.exportModal.addEventListener('click', (e) => {
+      if (e.target === elements.exportModal) elements.exportModal.classList.remove('visible');
+    });
+    
+    // Copy buttons delegation
+    document.addEventListener('click', (e) => {
+      const copyBtn = e.target.closest('.copy-btn');
+      if (copyBtn && copyBtn.dataset.copy) {
+        const fieldId = copyBtn.dataset.copy;
+        const element = document.getElementById(fieldId);
+        if (element) {
+          copyToClipboard(element.textContent, copyBtn);
+        }
+      }
+    });
+    
     elements.phoneInput.addEventListener('input', hideError);
     elements.phoneInput.addEventListener('blur', () => {
       let v = elements.phoneInput.value.trim();
@@ -1030,8 +1346,19 @@
       }
     });
 
+    // Setup keyboard shortcuts
+    setupKeyboardShortcuts();
+
+    // Load stats on page load
+    updateStatsDisplay(getStats());
+
     // Load from URL on page load
     loadFromUrl();
+    
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
   </script>
 </body>
 </html>
