@@ -261,33 +261,6 @@
     .info-label { font-size: 0.6875rem; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.025em; }
     .info-value { font-size: 0.875rem; font-weight: 500; text-align: right; display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
     .info-value.na { color: var(--text-muted); font-style: italic; }
-    
-    .copy-btn {
-      padding: 4px 8px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.875rem;
-      transition: all 150ms ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .copy-btn:hover {
-      background: var(--bg);
-      border-color: var(--accent);
-      color: var(--text);
-    }
-    .copy-btn:active {
-      transform: scale(0.95);
-    }
-    .copy-btn.copied {
-      background: var(--success);
-      border-color: var(--success);
-      color: white;
-    }
 
     .format-box {
       background: var(--bg-tertiary);
@@ -477,6 +450,31 @@
           <p class="hero-subtitle">Professional phone intelligence service</p>
         </section>
 
+        <!-- Statistics on Landing Page -->
+        <div class="bento-card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div class="card-icon"><i class="ph ph-chart-bar"></i></div>
+            <div>
+              <h3 class="card-title">Statistics</h3>
+              <p class="card-subtitle">Your activity</p>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="info-row">
+              <span class="info-label">Total Searches</span>
+              <span class="info-value" id="totalSearches">0</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Top Country</span>
+              <span class="info-value" id="topCountry">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Last Search</span>
+              <span class="info-value" id="lastSearch">-</span>
+            </div>
+          </div>
+        </div>
+
         <div class="search-card">
           <form class="search-form" id="searchForm">
             <div class="input-group">
@@ -536,46 +534,6 @@
             <div class="time-label" id="currentDate">-</div>
           </div>
 
-          <!-- Statistics Dashboard -->
-          <div class="bento-card">
-            <div class="card-header">
-              <div class="card-icon"><i class="ph ph-chart-bar"></i></div>
-              <div>
-                <h3 class="card-title">Statistics</h3>
-                <p class="card-subtitle">Your activity</p>
-              </div>
-            </div>
-            <div class="card-content">
-              <div class="info-row">
-                <span class="info-label">Total Searches</span>
-                <span class="info-value" id="totalSearches">0</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Top Country</span>
-                <span class="info-value" id="topCountry">-</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Last Search</span>
-                <span class="info-value" id="lastSearch">-</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- QR Code -->
-          <div class="bento-card">
-            <div class="card-header">
-              <div class="card-icon"><i class="ph ph-qr-code"></i></div>
-              <div>
-                <h3 class="card-title">QR Code</h3>
-                <p class="card-subtitle">Scan to save</p>
-              </div>
-            </div>
-            <div style="display: flex; justify-content: center; padding: 16px;">
-              <canvas id="qrCode" style="max-width: 150px; height: auto;"></canvas>
-            </div>
-            <div class="time-label">Scan to dial number</div>
-          </div>
-
           <!-- Phone Details -->
           <div class="bento-card">
             <div class="card-header">
@@ -588,24 +546,15 @@
             <div class="card-content">
               <div class="info-row">
                 <span class="info-label">Country</span>
-                <span class="info-value">
-                  <span id="country">-</span>
-                  <button class="copy-btn" data-copy="country" title="Copy country"><i class="ph ph-copy"></i></button>
-                </span>
+                <span class="info-value" id="country">-</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Code</span>
-                <span class="info-value">
-                  <span id="countryCode">-</span>
-                  <button class="copy-btn" data-copy="countryCode" title="Copy code"><i class="ph ph-copy"></i></button>
-                </span>
+                <span class="info-value" id="countryCode">-</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Carrier</span>
-                <span class="info-value">
-                  <span id="carrier">-</span>
-                  <button class="copy-btn" data-copy="carrier" title="Copy carrier"><i class="ph ph-copy"></i></button>
-                </span>
+                <span class="info-value" id="carrier">-</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Line Type</span>
@@ -613,10 +562,7 @@
               </div>
               <div class="info-row">
                 <span class="info-label">Location</span>
-                <span class="info-value">
-                  <span id="location">-</span>
-                  <button class="copy-btn" data-copy="location" title="Copy location"><i class="ph ph-copy"></i></button>
-                </span>
+                <span class="info-value" id="location">-</span>
               </div>
             </div>
           </div>
@@ -633,17 +579,11 @@
             <div class="card-content">
               <div class="format-box">
                 <div class="format-label">National</div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <div class="format-value" id="nationalFormat">-</div>
-                  <button class="copy-btn" data-copy="nationalFormat" title="Copy"><i class="ph ph-copy"></i></button>
-                </div>
+                <div class="format-value" id="nationalFormat">-</div>
               </div>
               <div class="format-box">
                 <div class="format-label">International</div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <div class="format-value" id="internationalFormat">-</div>
-                  <button class="copy-btn" data-copy="internationalFormat" title="Copy"><i class="ph ph-copy"></i></button>
-                </div>
+                <div class="format-value" id="internationalFormat">-</div>
               </div>
             </div>
           </div>
@@ -937,29 +877,16 @@
     }
 
     // Copy function
-    async function copyToClipboard(text, btn) {
+    async function copyToClipboard(text) {
       try {
         await navigator.clipboard.writeText(text);
-        btn.classList.add('copied');
-        btn.innerHTML = '<i class="ph ph-check"></i>';
-        setTimeout(() => {
-          btn.classList.remove('copied');
-          btn.innerHTML = '<i class="ph ph-copy"></i>';
-        }, 2000);
       } catch {
-        // Fallback for older browsers
         const textarea = document.createElement('textarea');
         textarea.value = text;
         document.body.appendChild(textarea);
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
-        btn.classList.add('copied');
-        btn.innerHTML = '<i class="ph ph-check"></i>';
-        setTimeout(() => {
-          btn.classList.remove('copied');
-          btn.innerHTML = '<i class="ph ph-copy"></i>';
-        }, 2000);
       }
     }
 
@@ -1324,18 +1251,6 @@ Generated: ${new Date().toLocaleString()}
     });
     elements.exportModal.addEventListener('click', (e) => {
       if (e.target === elements.exportModal) elements.exportModal.classList.remove('visible');
-    });
-    
-    // Copy buttons delegation
-    document.addEventListener('click', (e) => {
-      const copyBtn = e.target.closest('.copy-btn');
-      if (copyBtn && copyBtn.dataset.copy) {
-        const fieldId = copyBtn.dataset.copy;
-        const element = document.getElementById(fieldId);
-        if (element) {
-          copyToClipboard(element.textContent, copyBtn);
-        }
-      }
     });
     
     elements.phoneInput.addEventListener('input', hideError);
