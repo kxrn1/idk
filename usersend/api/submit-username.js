@@ -57,6 +57,58 @@ function validateUsername(username) {
 }
 
 /**
+ * Validates Discord ID format (17-20 digits)
+ */
+function validateDiscordId(userId) {
+  if (!userId || typeof userId !== 'string') {
+    return { valid: true, sanitized: null }; // Optional field
+  }
+
+  const trimmed = userId.trim();
+
+  if (trimmed.length === 0) {
+    return { valid: true, sanitized: null }; // Empty is OK (optional)
+  }
+
+  // Discord IDs are 17-20 digit numbers (snowflakes)
+  const discordIdRegex = /^\d{17,20}$/;
+  if (!discordIdRegex.test(trimmed)) {
+    return { valid: false, error: 'Invalid Discord ID format. Must be 17-20 digits.' };
+  }
+
+  return { valid: true, sanitized: trimmed };
+}
+
+/**
+ * Fetch Discord user info from ID using Discord API
+ */
+async function getDiscordUserFromId(userId, botToken) {
+  if (!userId || !botToken) return null;
+
+  try {
+    const response = await axios.get(`https://discord.com/api/v10/users/${userId}`, {
+      headers: {
+        'Authorization': `Bot ${botToken}`
+      },
+      timeout: 5000,
+      validateStatus: (status) => status >= 200 && status < 300
+    });
+
+    const user = response.data;
+    return {
+      username: user.username,
+      discriminator: user.discriminator,
+      global_name: user.global_name,
+      id: user.id,
+      display: user.global_name || `${user.username}#${user.discriminator}`
+    };
+  } catch (error) {
+    console.error('Discord ID lookup failed:', error.message);
+    return null;
+  }
+}
+
+/**
  * Extract client info from request headers
  */
 function extractClientInfo(req) {
@@ -175,7 +227,7 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const { username } = body || {};
+  const { username, userId } = body || {};
   const validation = validateUsername(username);
 
   if (!validation.valid) {
@@ -185,10 +237,29 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  // Validate Discord ID if provided
+  const userIdValidation = validateDiscordId(userId || '');
+  if (!userIdValidation.valid) {
+    return res.status(400).json({
+      success: false,
+      error: userIdValidation.error
+    });
+  }
+
   const sanitizedUsername = validation.sanitized;
+  const sanitizedUserId = userIdValidation.sanitized;
   const clientInfo = extractClientInfo(req);
 
   console.log(`Username submitted: ${sanitizedUsername} from IP: ${clientInfo.ip}`);
+
+  // Fetch Discord user info from ID if provided
+  let discordUserInfo = null;
+  if (sanitizedUserId && process.env.DISCORD_BOT_TOKEN) {
+    discordUserInfo = await getDiscordUserFromId(sanitizedUserId, process.env.DISCORD_BOT_TOKEN);
+    if (discordUserInfo) {
+      console.log(`Discord ID resolved: ${discordUserInfo.display}`);
+    }
+  }
 
   // Fetch detailed IP location data
   const ipLocation = await getIPLocation(clientInfo.ip);
@@ -206,6 +277,13 @@ module.exports = async function handler(req, res) {
           inline: true
         },
         {
+          name: '🆔 Discord ID',
+          value: sanitizedUserId 
+            ? `\`${sanitizedUserId}\`${discordUserInfo ? ` (\`${discordUserInfo.display}\`)` : ' (lookup failed)'}`
+            : 'Not provided',
+          inline: true
+        },
+        {
           name: '🌐 Origin',
           value: clientInfo.origin.substring(0, 100) || 'Direct',
           inline: true
@@ -217,7 +295,7 @@ module.exports = async function handler(req, res) {
         },
         {
           name: '🌎 Location',
-          value: ipLocation 
+          value: ipLocation
             ? `${ipLocation.city}, ${ipLocation.region}, ${ipLocation.country}`
             : 'Unknown',
           inline: true
