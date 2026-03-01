@@ -6,7 +6,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "embed.js",
+      "src": "**",
       "use": "@vercel/static"
     }
   ],
