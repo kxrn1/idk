@@ -1,76 +1,6 @@
 // API Showcase - Main Script
 // Uses JSONBin.io for persistent storage via secure serverless function
 
-// Default API data (shown if JSONBin is unavailable)
-const defaultApiData = [
-    {
-        "id": 1,
-        "title": "Authentication API",
-        "description": "Secure user authentication and authorization with OAuth 2.0, JWT tokens, and multi-factor authentication support.",
-        "publishedDate": "2025-01-15",
-        "author": "Security Team",
-        "thumbnail": "https://picsum.photos/seed/auth/400/225",
-        "icon": "lock",
-        "endpoint": "/api/auth",
-        "category": "authentication"
-    },
-    {
-        "id": 2,
-        "title": "Payment Processing API",
-        "description": "Handle payments, refunds, and subscriptions with support for multiple currencies and payment providers.",
-        "publishedDate": "2025-02-20",
-        "author": "Payments Team",
-        "thumbnail": "https://picsum.photos/seed/payment/400/225",
-        "icon": "credit-card",
-        "endpoint": "/api/payments",
-        "category": "data"
-    },
-    {
-        "id": 3,
-        "title": "Analytics API",
-        "description": "Real-time analytics and insights with customizable dashboards, metrics tracking, and data export capabilities.",
-        "publishedDate": "2025-03-10",
-        "author": "Data Team",
-        "thumbnail": "https://picsum.photos/seed/analytics/400/225",
-        "icon": "bar-chart",
-        "endpoint": "/api/analytics",
-        "category": "data"
-    },
-    {
-        "id": 4,
-        "title": "Notification API",
-        "description": "Send emails, SMS, and push notifications with templates, scheduling, and delivery tracking.",
-        "publishedDate": "2024-11-05",
-        "author": "Communications Team",
-        "thumbnail": "https://picsum.photos/seed/notify/400/225",
-        "icon": "bell",
-        "endpoint": "/api/notifications",
-        "category": "media"
-    },
-    {
-        "id": 5,
-        "title": "File Storage API",
-        "description": "Cloud storage solution with upload, download, versioning, and CDN integration for global delivery.",
-        "publishedDate": "2025-01-28",
-        "author": "Infrastructure Team",
-        "thumbnail": "https://picsum.photos/seed/storage/400/225",
-        "icon": "cloud",
-        "endpoint": "/api/storage",
-        "category": "media"
-    },
-    {
-        "id": 6,
-        "title": "Search API",
-        "description": "Full-text search with fuzzy matching, filters, faceting, and relevance scoring for optimal results.",
-        "publishedDate": "2024-12-12",
-        "author": "Search Team",
-        "thumbnail": "https://picsum.photos/seed/search/400/225",
-        "icon": "search",
-        "endpoint": "/api/search",
-        "category": "data"
-    }
-];
-
 // XSS Prevention - Sanitize user input
 function sanitizeInput(input) {
     if (typeof input !== 'string') return input;
@@ -120,7 +50,12 @@ const icons = {
     "arrow-right": `<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>`,
     "external-link": `<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>`,
     "calendar": `<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>`,
-    "user": `<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>`
+    "user": `<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>`,
+    "message": `<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>`,
+    "code": `<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>`,
+    "cpu": `<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>`,
+    "wifi": `<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>`,
+    "users": `<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>`
 };
 
 // Format date for display
@@ -140,16 +75,19 @@ async function fetchApis() {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
-        
+
         if (!response.ok) {
             throw new Error('Failed to fetch APIs');
         }
-        
+
         const data = await response.json();
-        return Array.isArray(data) ? data : defaultApiData;
+        if (!Array.isArray(data)) {
+            throw new Error('Invalid data format from server');
+        }
+        return data;
     } catch (error) {
         console.error('Error fetching APIs:', error);
-        return [...defaultApiData];
+        throw new Error('Unable to load APIs. Please try again later.');
     }
 }
 
@@ -243,16 +181,17 @@ function initCustomSelect() {
     display.addEventListener('click', (e) => {
         e.stopPropagation();
         const isOpen = display.classList.contains('open');
-        
+
         // Close all other selects
         document.querySelectorAll('.custom-select .select-display.open').forEach(el => {
             el.classList.remove('open');
             el.closest('.custom-select').querySelector('.select-options').classList.remove('open');
         });
-        
+
         if (!isOpen) {
             display.classList.add('open');
             customSelect.querySelector('.select-options').classList.add('open');
+            customSelect.classList.add('open');
         }
     });
 
@@ -261,17 +200,18 @@ function initCustomSelect() {
             e.stopPropagation();
             const value = option.dataset.value;
             const label = option.querySelector('span').textContent;
-            
+
             hiddenInput.value = value;
             valueSpan.textContent = label;
             display.classList.remove('placeholder');
-            
+
             options.forEach(opt => opt.classList.remove('selected'));
             option.classList.add('selected');
-            
+
             display.classList.remove('open');
             customSelect.querySelector('.select-options').classList.remove('open');
-            
+            customSelect.classList.remove('open');
+
             // Clear error
             customSelect.classList.remove('error');
             document.getElementById('categoryError').textContent = '';
@@ -282,6 +222,7 @@ function initCustomSelect() {
     document.addEventListener('click', () => {
         display.classList.remove('open');
         customSelect.querySelector('.select-options').classList.remove('open');
+        customSelect.classList.remove('open');
     });
 }
 
@@ -447,7 +388,13 @@ function initPublishForm() {
         const iconMap = {
             'authentication': 'lock',
             'data': 'bar-chart',
-            'media': 'cloud'
+            'media': 'cloud',
+            'communication': 'message',
+            'payment': 'credit-card',
+            'developer': 'code',
+            'ai': 'cpu',
+            'iot': 'wifi',
+            'social': 'users'
         };
 
         const newApi = {
@@ -472,7 +419,7 @@ function initPublishForm() {
             );
 
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }, 1500);
         } catch (error) {
             showFormStatus(
@@ -583,11 +530,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Fetch and render APIs on home page
     if (apiGrid) {
-        apiData = await fetchApis();
-        apiData.forEach((api, index) => {
-            const card = createApiCard(api, index);
-            apiGrid.appendChild(card);
-        });
+        try {
+            apiData = await fetchApis();
+            apiData.forEach((api, index) => {
+                const card = createApiCard(api, index);
+                apiGrid.appendChild(card);
+            });
+        } catch (error) {
+            apiGrid.innerHTML = `
+                <div class="error-message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <p>${error.message || 'Unable to load APIs. Please try again later.'}</p>
+                </div>
+            `;
+        }
     }
 
     // Fallback: ensure content is visible even if animations fail

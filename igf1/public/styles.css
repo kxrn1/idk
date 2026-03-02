@@ -147,6 +147,7 @@ body {
 .hero {
     text-align: center;
     margin-bottom: 2rem;
+    margin-top: 3rem;
 }
 
 /* Fallback for browsers without animation support */
@@ -316,11 +317,40 @@ body {
     height: 16px;
 }
 
+/* Top Back Link */
+.back-link-top {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all var(--transition-base);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+}
+
+.back-link-top:hover {
+    color: var(--text-primary);
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+}
+
+.back-link-top svg {
+    width: 16px;
+    height: 16px;
+}
+
 /* Publish Form */
 .publish-form {
-    max-width: 500px;
+    max-width: 420px;
     margin: 0 auto;
-    padding: 1.5rem;
+    padding: 1.25rem;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
@@ -469,7 +499,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     padding: 0.5rem;
-    z-index: 100;
+    z-index: 1000;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
@@ -600,6 +630,28 @@ body {
     background: rgba(59, 130, 246, 0.1);
     border: 1px solid rgba(59, 130, 246, 0.3);
     color: #3b82f6;
+}
+
+/* Error Message */
+.error-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #ef4444;
+}
+
+.error-message svg {
+    width: 48px;
+    height: 48px;
+    stroke: #ef4444;
+}
+
+.error-message p {
+    font-size: 1rem;
+    color: var(--text-secondary);
 }
 
 /* API Grid */
@@ -968,6 +1020,26 @@ body {
         font-size: 1rem;
     }
 
+    .hero {
+        margin-top: 4.5rem;
+    }
+
+    .back-link-top {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    .back-link-top span {
+        display: none;
+    }
+
+    .back-link-top svg {
+        width: 18px;
+        height: 18px;
+    }
+
     .api-grid {
         grid-template-columns: 1fr;
     }
@@ -1006,7 +1078,8 @@ body {
     }
 
     .publish-form {
-        padding: 1.5rem 1rem;
+        padding: 1.25rem 1rem;
+        margin: 0 0.5rem;
     }
 
     .form-row {
@@ -1023,8 +1096,20 @@ body {
 
     .select-options {
         position: fixed;
-        left: 0.5rem !important;
-        right: 0.5rem !important;
-        max-height: 300px;
+        left: 1rem !important;
+        right: 1rem !important;
+        max-height: 40vh;
+        top: auto;
+        bottom: auto;
+    }
+
+    .custom-select.open .select-options {
+        position: fixed;
+        left: 1rem !important;
+        right: 1rem !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        max-height: 60vh;
+        z-index: 9999;
     }
 }
