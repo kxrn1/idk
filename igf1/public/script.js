@@ -19,7 +19,7 @@ function isValidImageUrl(url) {
         const allowedHosts = [
             'i.imgur.com', 'imgur.com', 'images.unsplash.com', 'unsplash.com',
             'picsum.photos', 'cdn.pixabay.com', 'pixabay.com',
-            'images.pexels.com', 'pexels.com', 'raw.githubusercontent.com'
+            'images.pexels.com', 'pexels.com', 'media.discordapp.net', 'ibb.co', 'imgbb.com', 'discord.com', 'raw.githubusercontent.com'
         ];
         const isAllowedHost = allowedHosts.some(host => parsed.hostname.includes(host));
         const isImageExt = /\.(jpeg|jpg|gif|png|webp|svg)(\?.*)?$/i.test(parsed.pathname);

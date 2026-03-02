@@ -1011,6 +1011,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     transition: transform var(--transition-slow);
 }
 
@@ -1066,7 +1067,6 @@ body {
 .api-card:hover .card-icon {
     background: var(--bg-primary);
     border-color: var(--border-hover);
-    transform: rotate(-5deg);
 }
 
 .card-title-group {
