@@ -1,5 +1,3 @@
-// API Showcase - Main Script
-// Uses JSONBin.io for persistent storage via secure serverless function
 
 // XSS Prevention - Sanitize user input
 function sanitizeInput(input) {
@@ -166,7 +164,7 @@ function createApiCard(api, index) {
                         ${icons['arrow-right']}
                     </svg>
                 </a>
-                <button class="btn btn-secondary" aria-label="Open in new window" onclick="window.open('${sanitizeInput(api.endpoint)}', '_blank')">
+                <button class="btn btn-secondary" aria-label="Open website" onclick="window.open('${sanitizeInput(api.website || api.endpoint)}', '_blank')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         ${icons['external-link']}
                     </svg>
@@ -342,6 +340,68 @@ function initPublishForm() {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
 
+    // Step wizard
+    let currentStep = 1;
+    const totalSteps = 3;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function updateSteps() {
+        // Update form steps visibility
+        document.querySelectorAll('.form-step').forEach(step => {
+            step.classList.remove('active');
+            if (parseInt(step.dataset.step) === currentStep) {
+                step.classList.add('active');
+            }
+        });
+
+        // Update progress indicators
+        document.querySelectorAll('.progress-steps .step').forEach((step, index) => {
+            step.classList.remove('active', 'completed');
+            if (index + 1 < currentStep) {
+                step.classList.add('completed');
+            } else if (index + 1 === currentStep) {
+                step.classList.add('active');
+            }
+        });
+
+        // Update buttons
+        prevBtn.style.display = currentStep === 1 ? 'none' : 'inline-flex';
+        nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-flex';
+        submitBtn.style.display = currentStep === totalSteps ? 'inline-flex' : 'none';
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+            currentStep--;
+            updateSteps();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        // Validate current step fields
+        let isValid = true;
+        if (currentStep === 1) {
+            isValid = validateField(document.getElementById('apiName')) &&
+                      validateField(document.getElementById('apiDescription'));
+        } else if (currentStep === 2) {
+            isValid = validateField(document.getElementById('apiImage'));
+            const categoryInput = document.getElementById('apiCategory');
+            const categorySelect = document.getElementById('categorySelect');
+            if (!categoryInput.value) {
+                categorySelect.classList.add('error');
+                document.getElementById('categoryError').textContent = 'Please select a category';
+                isValid = false;
+            }
+        }
+
+        if (isValid && currentStep < totalSteps) {
+            currentStep++;
+            updateSteps();
+        }
+    });
+
     // Real-time validation
     const nameInput = document.getElementById('apiName');
     const descInput = document.getElementById('apiDescription');
@@ -434,6 +494,9 @@ function initPublishForm() {
             submitBtn.disabled = false;
         }
     });
+
+    // Initialize step wizard
+    updateSteps();
 }
 
 function validateField(input) {
@@ -579,6 +642,51 @@ function initModal() {
 
 // Global API data variable
 let apiData = [];
+let currentCategory = 'all';
+
+// Render API grid
+function renderApiGrid(apis) {
+    const apiGrid = document.getElementById('apiGrid');
+    if (!apiGrid) return;
+
+    apiGrid.innerHTML = '';
+
+    const filteredApis = currentCategory === 'all'
+        ? apis
+        : apis.filter(api => api.category === currentCategory);
+
+    if (filteredApis.length === 0) {
+        apiGrid.innerHTML = `
+            <div class="no-apis">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p>No APIs found in this category</p>
+            </div>
+        `;
+        return;
+    }
+
+    filteredApis.forEach((api, index) => {
+        const card = createApiCard(api, index);
+        apiGrid.appendChild(card);
+    });
+}
+
+// Initialize category tabs
+function initCategoryTabs() {
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentCategory = tab.dataset.category;
+            renderApiGrid(apiData);
+        });
+    });
+}
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', async () => {
@@ -593,14 +701,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize modal
     initModal();
 
+    // Initialize category tabs
+    initCategoryTabs();
+
     // Fetch and render APIs on home page
     if (apiGrid) {
         try {
             apiData = await fetchApis();
-            apiData.forEach((api, index) => {
-                const card = createApiCard(api, index);
-                apiGrid.appendChild(card);
-            });
+            renderApiGrid(apiData);
         } catch (error) {
             apiGrid.innerHTML = `
                 <div class="error-message">
