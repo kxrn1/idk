@@ -81,13 +81,12 @@ module.exports = async (req, res) => {
             const updatedData = [...existingData, newApi];
             console.log('Updating bin with', updatedData.length, 'APIs');
 
-            // Update bin
+            // Update bin (without versioning for free plan)
             const updateRes = await makeRequest(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Master-Key': MASTER_KEY,
-                    'X-Bin-Versioning': 'true'
+                    'X-Master-Key': MASTER_KEY
                 },
                 body: JSON.stringify(updatedData)
             });

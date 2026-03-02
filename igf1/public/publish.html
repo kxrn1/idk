@@ -201,16 +201,32 @@
                 <div class="form-group">
                     <label for="apiEndpoint">API Endpoint <span class="optional">(optional)</span></label>
                     <div class="input-wrapper">
-                        <input 
-                            type="text" 
-                            id="apiEndpoint" 
-                            name="apiEndpoint" 
+                        <input
+                            type="text"
+                            id="apiEndpoint"
+                            name="apiEndpoint"
                             placeholder="/api/your-api"
                             maxlength="100"
                             autocomplete="off"
                         >
                     </div>
                     <span class="form-error" id="endpointError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="apiWebsite">Website URL <span class="optional">(optional)</span></label>
+                    <div class="input-wrapper">
+                        <input
+                            type="url"
+                            id="apiWebsite"
+                            name="apiWebsite"
+                            placeholder="https://your-api-website.com"
+                            maxlength="200"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <span class="form-hint">Link to your API documentation or website</span>
+                    <span class="form-error" id="websiteError"></span>
                 </div>
 
                 <div class="form-actions">
@@ -228,9 +244,25 @@
                         <span>Cancel</span>
                     </a>
                 </div>
-
-                <div class="form-status" id="formStatus"></div>
             </form>
+
+            <!-- Publish Modal -->
+            <div class="modal-overlay" id="publishModal">
+                <div class="modal">
+                    <div class="modal-spinner" id="modalSpinner">
+                        <div class="spinner"></div>
+                        <p class="modal-text">Publishing your API...</p>
+                    </div>
+                    <div class="modal-content" id="modalContent" style="display: none;">
+                        <div class="modal-icon" id="modalIcon"></div>
+                        <h3 class="modal-title" id="modalTitle"></h3>
+                        <p class="modal-message" id="modalMessage"></p>
+                        <button class="btn btn-primary" id="modalClose" style="margin-top: 1rem;">
+                            <span>Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 

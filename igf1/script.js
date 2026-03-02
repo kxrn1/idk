@@ -31,6 +31,16 @@ function isValidImageUrl(url) {
     }
 }
 
+// Validate URL format
+function isValidUrl(urlString) {
+    try {
+        const url = new URL(urlString);
+        return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (_) {
+        return false;
+    }
+}
+
 // Validate date format (YYYY-MM-DD)
 function isValidDate(dateString) {
     const regex = /^\d{4}-\d{2}-\d{2}$/;
@@ -319,14 +329,13 @@ function initSearch() {
 // Publish form validation and submission
 function initPublishForm() {
     const form = document.getElementById('publishForm');
-    const formStatus = document.getElementById('formStatus');
-    
+
     if (!form) return;
 
     // Initialize custom components
     initCustomSelect();
     initCharCounter();
-    
+
     // Set default date to today
     const dateInput = document.getElementById('apiDate');
     if (dateInput) {
@@ -339,8 +348,9 @@ function initPublishForm() {
     const imageInput = document.getElementById('apiImage');
     const authorInput = document.getElementById('apiAuthor');
     const endpointInput = document.getElementById('apiEndpoint');
+    const websiteInput = document.getElementById('apiWebsite');
 
-    [nameInput, descInput, imageInput, authorInput, endpointInput].forEach(input => {
+    [nameInput, descInput, imageInput, authorInput, endpointInput, websiteInput].forEach(input => {
         if (input) {
             input.addEventListener('blur', () => validateField(input));
             input.addEventListener('input', () => {
@@ -353,7 +363,7 @@ function initPublishForm() {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         // Validate all fields
         const isNameValid = validateField(nameInput);
         const isDescValid = validateField(descInput);
@@ -361,7 +371,8 @@ function initPublishForm() {
         const isDateValid = validateField(dateInput);
         const isAuthorValid = validateField(authorInput);
         const isEndpointValid = validateField(endpointInput);
-        
+        const isWebsiteValid = validateField(websiteInput);
+
         // Validate category
         const categoryInput = document.getElementById('apiCategory');
         const categorySelect = document.getElementById('categorySelect');
@@ -374,13 +385,13 @@ function initPublishForm() {
             document.getElementById('categoryError').textContent = '';
         }
 
-        if (!isNameValid || !isDescValid || !isImageValid || !isDateValid || !isAuthorValid || !isEndpointValid || !isCategoryValid) {
-            showFormStatus(formStatus, 'Please fix the errors above', 'error');
+        if (!isNameValid || !isDescValid || !isImageValid || !isDateValid || !isAuthorValid || !isEndpointValid || !isWebsiteValid || !isCategoryValid) {
+            showModal('error', 'Validation Error', 'Please fix the errors in the form.');
             return;
         }
 
-        // Show loading state
-        showFormStatus(formStatus, 'Publishing your API...', 'loading');
+        // Show loading modal
+        showModal('loading');
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
 
@@ -406,27 +417,20 @@ function initPublishForm() {
             publishedDate: sanitizeInput(dateInput.value),
             author: sanitizeInput(authorInput.value.trim()),
             endpoint: sanitizeInput(endpointInput.value.trim()) || '/api/' + nameInput.value.toLowerCase().replace(/\s+/g, '-'),
+            website: websiteInput.value.trim() || null,
             icon: iconMap[categoryInput.value] || 'search'
         };
 
         try {
             await submitApi(newApi);
-            
-            showFormStatus(
-                formStatus,
-                'API published successfully! Redirecting...',
-                'success'
-            );
+
+            showModal('success', 'API Published!', 'Your API has been successfully published and will appear on the homepage shortly.');
 
             setTimeout(() => {
                 window.location.href = '/';
-            }, 1500);
+            }, 2000);
         } catch (error) {
-            showFormStatus(
-                formStatus,
-                'Failed to publish API. Please try again.',
-                'error'
-            );
+            showModal('error', 'Publish Failed', error.message || 'Failed to publish API. Please try again.');
             submitBtn.disabled = false;
         }
     });
@@ -496,6 +500,13 @@ function validateField(input) {
                 errorMessage = 'Endpoint should start with /';
             }
             break;
+
+        case 'apiWebsite':
+            if (input.value.trim() && !isValidUrl(input.value.trim())) {
+                isValid = false;
+                errorMessage = 'Please enter a valid URL (https://...)';
+            }
+            break;
     }
 
     if (!isValid) {
@@ -509,10 +520,61 @@ function validateField(input) {
     return isValid;
 }
 
-function showFormStatus(element, message, type) {
-    if (!element) return;
-    element.textContent = message;
-    element.className = 'form-status ' + type;
+// Modal functions
+function showModal(type, title = '', message = '') {
+    const modal = document.getElementById('publishModal');
+    const spinner = document.getElementById('modalSpinner');
+    const content = document.getElementById('modalContent');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+
+    if (type === 'loading') {
+        spinner.style.display = 'block';
+        content.style.display = 'none';
+    } else {
+        spinner.style.display = 'none';
+        content.style.display = 'block';
+
+        // Set icon based on type
+        const icons = {
+            success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+            error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+        };
+
+        modalIcon.innerHTML = icons[type] || '';
+        modalIcon.className = `modal-icon modal-${type}`;
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+    }
+}
+
+function hideModal() {
+    const modal = document.getElementById('publishModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Initialize modal close button
+function initModal() {
+    const modalClose = document.getElementById('modalClose');
+    const modal = document.getElementById('publishModal');
+
+    if (modalClose && modal) {
+        modalClose.addEventListener('click', hideModal);
+
+        // Close on overlay click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+    }
 }
 
 // Global API data variable
@@ -527,6 +589,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize publish form if on publish page
     initPublishForm();
+
+    // Initialize modal
+    initModal();
 
     // Fetch and render APIs on home page
     if (apiGrid) {
