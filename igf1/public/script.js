@@ -1,5 +1,5 @@
 // API Showcase - Modern Black & White
-const ADMIN_KEY = 'your-admin-key-here'; // Set this in Vercel environment variables
+const ADMIN_KEY = 'h[%B7aaG@Y2=L(#-7g^C}@qmq+|u`5X~RiRF3ATa8d_u$~FU};HUf_b@K>uP:/wK1(gzL/1(yCV8+_Jv7Sazl$D3_cF@57nuPqQ/w-OY(ma@[qYlfh:Ju)+ZeZ@sg(VA';
 
 // Sanitize input
 function sanitizeInput(input) {
