@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>PhoneSint - Phone Number Intelligence</title>
+  <meta name="title" content="PhoneSint - Phone Number Intelligence">
+  <meta name="description" content="Professional phone number lookup with carrier detection, location, and risk analysis.">
+  <meta name="keywords" content="phone lookup, carrier lookup, number validation, phone intelligence">
+  <meta name="author" content="qvfear">
+  <link rel="canonical" href="https://phonesint.vercel.app/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fear.subeditor.works/">
+  <meta property="og:title" content="PhoneSint">
+  <meta property="og:description" content="Professional phone number lookup service.">
+  <meta property="og:image" content="https://media.discordapp.net/attachments/1457010213272944683/1477234551532159038/img.png?ex=69a40562&is=69a2b3e2&hm=fb3905baf07b5663f41c9b35b01164f80b77c177e17fec30f9b881e7f467dbe3">
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="PhoneSint">
+  <meta property="twitter:description" content="Professional phone number lookup service.">
+  <meta property="twitter:image" content="https://media.discordapp.net/attachments/1457010213272944683/1477234551532159038/img.png?ex=69a40562&is=69a2b3e2&hm=fb3905baf07b5663f41c9b35b01164f80b77c177e17fec30f9b881e7f467dbe3">
+  
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PhoneSint">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📞</text></svg>">
+
+  <!-- Schema.org Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PhoneSint",
+    "url": "https://phonesint.vercel.app/",
+    "description": "Professional phone number lookup with carrier detection, location, and risk analysis.",
+    "applicationCategory": "Utility",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": "Phone number validation, Carrier lookup, Location detection, Risk assessment, Number formatting",
+    "author": {
+      "@type": "Person",
+      "name": "qvfear"
+    }
+  }
+  </script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
+  <style>
+    :root {
+      --bg: #000000;
+      --bg-secondary: #0a0a0a;
+      --bg-tertiary: #111111;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --text-subtle: #444444;
+      --border: #222222;
+      --border-light: #333333;
+      --accent: #ffffff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --info: #06b6d4;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      /* Disable text selection */
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    /* Custom Scrollbar */
+    * { scrollbar-width: thin; scrollbar-color: var(--border-light) var(--bg); }
+    *::-webkit-scrollbar { width: 8px; height: 8px; }
+    *::-webkit-scrollbar-track { background: var(--bg); }
+    *::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+    *::-webkit-scrollbar-thumb:hover { background: var(--border); }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+    .main-wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+    
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 60px 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .search-container.hidden {
+      display: none;
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    .hero { text-align: center; margin-bottom: 40px; }
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .hero-subtitle {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+    }
+
+    .search-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 8px;
+    }
+    .search-form { display: flex; gap: 8px; }
+    .input-group { flex: 1; position: relative; }
+    .phone-input {
+      width: 100%;
+      height: 56px;
+      padding: 0 20px;
+      font-size: 0.9375rem;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 150ms ease;
+    }
+    .phone-input::placeholder { color: var(--text-subtle); }
+    .phone-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+    .phone-input.error { border-color: #ff0000; }
+    
+    .search-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 28px;
+      height: 56px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .search-btn:hover:not(:disabled) {
+      background: #dddddd;
+      transform: translateY(-1px);
+    }
+    .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .search-btn .btn-icon { font-size: 1.125rem; }
+    .search-btn.loading .btn-text { display: none; }
+    .search-btn.loading .btn-spinner {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-message {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      background: rgba(255, 0, 0, 0.08);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      border-radius: 10px;
+      color: #ff4444;
+      font-size: 0.8125rem;
+    }
+    .error-message.visible { display: flex; }
+
+    /* Results Panel */
+    .results-container {
+      display: none;
+      padding: 60px 0;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .results-container.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .results-title { font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .results-title .flag { font-size: 1.5rem; }
+    
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .action-btn:hover {
+      border-color: var(--accent);
+      background: var(--bg-secondary);
+    }
+    .action-btn i { font-size: 1rem; }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .bento-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 150ms ease;
+    }
+    .bento-card:hover {
+      border-color: var(--border-light);
+      transform: translateY(-2px);
+    }
+    .bento-card.wide { grid-column: span 2; }
+    .bento-card.full { grid-column: 1 / -1; }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .card-title { font-size: 0.875rem; font-weight: 600; }
+    .card-subtitle { font-size: 0.6875rem; color: var(--text-subtle); margin-top: 2px; }
+    .card-content { display: flex; flex-direction: column; gap: 10px; }
+    
+    .info-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .info-label { font-size: 0.6875rem; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.025em; }
+    .info-value { font-size: 0.875rem; font-weight: 500; text-align: right; display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+    .info-value.na { color: var(--text-muted); font-style: italic; }
+
+    .format-box {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .format-label { font-size: 0.6875rem; color: var(--text-subtle); text-transform: uppercase; margin-bottom: 4px; }
+    .format-value { font-size: 0.875rem; font-weight: 500; font-family: monospace; }
+
+    .dialing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .dialing-item {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .dialing-item .label { font-size: 0.6875rem; color: var(--text-subtle); text-transform: uppercase; margin-bottom: 4px; }
+    .dialing-item .value { font-size: 0.9375rem; font-weight: 600; }
+
+    .time-display {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      font-family: monospace;
+    }
+    .time-label {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      border-radius: 999px;
+    }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-error { background: rgba(239, 68, 68, 0.15); color: var(--error); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-info { background: rgba(6, 182, 212, 0.15); color: var(--info); border: 1px solid rgba(6, 182, 212, 0.3); }
+
+    .unavailable-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    .unavailable-message i { font-size: 2rem; margin-bottom: 12px; display: block; }
+
+    /* Footer - No HR */
+    .footer {
+      margin-top: auto;
+      padding: 40px 0;
+    }
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9375rem;
+      font-weight: 700;
+    }
+    .footer-brand-icon { font-size: 1.125rem; }
+    .footer-text { font-size: 0.8125rem; color: var(--text-subtle); }
+    .footer-credits {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .footer-credit { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-credit strong { color: var(--text-muted); font-weight: 500; }
+
+    /* Share Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.visible { display: flex; }
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .modal-title { font-size: 1rem; font-weight: 600; }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.25rem;
+      padding: 4px;
+    }
+    .modal-close:hover { color: var(--text); }
+    .share-url {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Inter', monospace;
+      font-size: 0.875rem;
+      word-break: break-all;
+      margin-bottom: 16px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+    .copy-btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .copy-btn:hover { background: #dddddd; }
+
+    @media (max-width: 1024px) {
+      .bento-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .hero-title { font-size: 1.75rem; }
+      .search-form { flex-direction: column; }
+      .search-btn { width: 100%; }
+      .bento-grid { grid-template-columns: 1fr; }
+      .footer-credits { flex-direction: column; gap: 8px; }
+      .dialing-grid { grid-template-columns: 1fr; }
+      .results-header { flex-direction: column; align-items: flex-start; }
+      .action-buttons { width: 100%; }
+      .action-btn { flex: 1; justify-content: center; }
+      .crypto-grid { grid-template-columns: 1fr; }
+      .watermark { display: none; }
+    }
+
+    /* Crypto Support Modal */
+    .crypto-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .crypto-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      transition: all 150ms ease;
+    }
+    .crypto-item:hover {
+      border-color: var(--border-light);
+    }
+    .crypto-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .crypto-logo {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+    .crypto-name {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+    .crypto-ticker {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .crypto-address {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--bg-secondary);
+      padding: 8px 10px;
+      border-radius: 6px;
+      word-break: break-all;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .crypto-copy-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .crypto-copy-btn:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+    .crypto-copy-btn.copied {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    /* Watermark */
+    .watermark {
+      position: fixed;
+      bottom: 80px;
+      right: 24px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--text-subtle);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 9999;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transform: rotate(-5deg);
+      transform-origin: bottom right;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+    <main class="container">
+      <!-- Search Container -->
+      <div class="search-container" id="searchContainer">
+        <section class="hero">
+          <h1 class="hero-title">PhoneSint</h1>
+          <p class="hero-subtitle">Professional phone intelligence service</p>
+        </section>
+
+        <!-- Statistics -->
+        <div class="bento-card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div class="card-icon"><i class="ph ph-chart-bar"></i></div>
+            <div>
+              <h3 class="card-title">Statistics</h3>
+              <p class="card-subtitle">Your activity</p>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="info-row">
+              <span class="info-label">Total Searches</span>
+              <span class="info-value" id="totalSearches">0</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Top Country</span>
+              <span class="info-value" id="topCountry">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Last Search</span>
+              <span class="info-value" id="lastSearch">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-card">
+          <form class="search-form" id="searchForm">
+            <div class="input-group">
+              <input 
+                type="tel" 
+                class="phone-input" 
+                id="phoneInput"
+                placeholder="+1 (555) 123-4567"
+                autocomplete="off"
+                required
+              >
+            </div>
+            <button type="submit" class="search-btn" id="searchBtn">
+              <span class="btn-text">Analyze</span>
+              <i class="ph ph-spinner btn-spinner" style="display: none;"></i>
+              <i class="ph ph-arrow-right btn-icon"></i>
+            </button>
+          </form>
+          <div class="error-message" id="errorMessage">
+            <i class="ph ph-warning-circle"></i>
+            <span id="errorText"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Container -->
+      <div class="results-container" id="resultsContainer">
+        <div class="results-header">
+          <h2 class="results-title">
+            <span class="flag" id="resultFlag">🏳️</span>
+            <span id="resultNumber">-</span>
+          </h2>
+          <div class="action-buttons">
+            <button class="action-btn" id="exportBtn">
+              <i class="ph ph-download-simple"></i> Export
+            </button>
+            <button class="action-btn" id="shareBtn">
+              <i class="ph ph-share-network"></i> Share
+            </button>
+            <button class="action-btn" id="newSearchBtn">
+              <i class="ph ph-arrow-left"></i> New Search
+            </button>
+          </div>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Current Local Time -->
+          <div class="bento-card full">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-clock"></i></div>
+              <div>
+                <h3 class="card-title">Current Local Time</h3>
+                <p class="card-subtitle" id="timezoneName">-</p>
+              </div>
+            </div>
+            <div class="time-display" id="currentTime">--:--:--</div>
+            <div class="time-label" id="currentDate">-</div>
+          </div>
+
+          <!-- Phone Details -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-map-pin"></i></div>
+              <div>
+                <h3 class="card-title">Phone Details</h3>
+                <p class="card-subtitle">Verified info</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="info-row">
+                <span class="info-label">Country</span>
+                <span class="info-value" id="country">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Code</span>
+                <span class="info-value" id="countryCode">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Carrier</span>
+                <span class="info-value" id="carrier">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Line Type</span>
+                <span class="info-value" id="lineType">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Location</span>
+                <span class="info-value" id="location">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Number Formats -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-text-aa"></i></div>
+              <div>
+                <h3 class="card-title">Number Formats</h3>
+                <p class="card-subtitle">Dialing formats</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="format-box">
+                <div class="format-label">National</div>
+                <div class="format-value" id="nationalFormat">-</div>
+              </div>
+              <div class="format-box">
+                <div class="format-label">International</div>
+                <div class="format-value" id="internationalFormat">-</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dialing Info -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-phone-call"></i></div>
+              <div>
+                <h3 class="card-title">Dialing Info</h3>
+                <p class="card-subtitle">Number breakdown</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="dialing-grid">
+                <div class="dialing-item">
+                  <div class="label">Area Code</div>
+                  <div class="value" id="areaCode">-</div>
+                </div>
+                <div class="dialing-item">
+                  <div class="label">Length</div>
+                  <div class="value" id="areaCodeLength">-</div>
+                </div>
+                <div class="dialing-item">
+                  <div class="label">Subscriber</div>
+                  <div class="value" id="subscriberNumber">-</div>
+                </div>
+                <div class="dialing-item">
+                  <div class="label">Intl Prefix</div>
+                  <div class="value" id="intlPrefix">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Country Info -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-globe"></i></div>
+              <div>
+                <h3 class="card-title">Country Info</h3>
+                <p class="card-subtitle">Location details</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="info-row">
+                <span class="info-label">Capital</span>
+                <span class="info-value" id="capital">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Languages</span>
+                <span class="info-value" id="languages">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Currency</span>
+                <span class="info-value" id="currency">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Emergency</span>
+                <span class="info-value" id="emergency">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Validation -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-check-circle"></i></div>
+              <div>
+                <h3 class="card-title">Validation</h3>
+                <p class="card-subtitle">Number status</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="info-row">
+                <span class="info-label">Valid Format</span>
+                <span class="info-value" id="isValid">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Line Status</span>
+                <span class="info-value" id="lineStatus">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Is VoIP</span>
+                <span class="info-value" id="isVoip">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Assessment -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-shield-warning"></i></div>
+              <div>
+                <h3 class="card-title">Risk Assessment</h3>
+                <p class="card-subtitle">Safety check</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="info-row">
+                <span class="info-label">Risk Level</span>
+                <span class="info-value" id="riskLevel">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Disposable</span>
+                <span class="info-value" id="isDisposable">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Abuse Detected</span>
+                <span class="info-value" id="isAbuse">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Data Breaches -->
+          <div class="bento-card">
+            <div class="card-header">
+              <div class="card-icon"><i class="ph ph-database"></i></div>
+              <div>
+                <h3 class="card-title">Data Breaches</h3>
+                <p class="card-subtitle">Exposure check</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="info-row">
+                <span class="info-label">Total Breaches</span>
+                <span class="info-value" id="totalBreaches">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">First Breach</span>
+                <span class="info-value" id="firstBreach">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Last Breach</span>
+                <span class="info-value" id="lastBreach">-</span>
+              </div>
+              <div class="info-row" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);">
+                <span class="info-label" style="width: 100%; text-align: center; color: var(--text-muted); font-size: 0.75rem;">
+                  ℹ️ Breach data not available for this region
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Share Modal -->
+    <div class="modal-overlay" id="shareModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Share Results</h3>
+          <button class="modal-close" id="closeShareModal"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="share-url" id="shareUrl">-</div>
+        <button class="copy-btn" id="copyUrlBtn" style="width: 100%; justify-content: center; padding: 12px;">
+          <i class="ph ph-copy"></i> Copy Link
+        </button>
+      </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Export Results</h3>
+          <button class="modal-close" id="closeExportModal"><i class="ph ph-x"></i></button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 16px;">Choose format to download:</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="action-btn" id="exportJsonBtn" style="justify-content: center;">
+            <i class="ph ph-file-code"></i> JSON
+          </button>
+          <button class="action-btn" id="exportTxtBtn" style="justify-content: center;">
+            <i class="ph ph-file-text"></i> Text (.txt)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div class="modal-overlay" id="installModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Install PhoneSint</h3>
+          <button class="modal-close" id="closeInstallModal"><i class="ph ph-x"></i></button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 16px;">Install PhoneSint for quick access and offline support.</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="action-btn" id="installBtn" style="justify-content: center; background: var(--accent); color: var(--bg);">
+            <i class="ph ph-download-simple"></i> Install Now
+          </button>
+          <button class="action-btn" id="laterInstallBtn" style="justify-content: center;">
+            Maybe Later
+          </button>
+        </div>
+        <p style="color: var(--text-subtle); font-size: 0.75rem; margin-top: 16px; text-align: center;">
+          ℹ️ In Firefox, go to Menu → Install PhoneSint
+        </p>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <i class="ph ph-shield-check footer-brand-icon"></i>
+            <span>PhoneSint</span>
+          </div>
+          <p class="footer-text">© 2026 PhoneSint</p>
+          <div class="footer-credits">
+            <div class="footer-credit">Idea: <strong>Ytx12</strong></div>
+            <div class="footer-credit">Coding: <strong>terror._1</strong></div>
+            <div class="footer-credit">Website: <strong>qvfear</strong></div>
+          </div>
+          <button class="action-btn" id="supportBtn" style="margin-top: 16px;">
+            <i class="ph ph-coins"></i> Support Us
+          </button>
+          <p class="footer-text" style="margin-top: 16px; font-size: 0.6875rem; max-width: 400px;">
+            <strong>© 2026 PhoneSint. All rights reserved.</strong><br>
+            This service is for informational purposes only. Unauthorized copying, reproduction, or distribution of this website's content, design, or code is strictly prohibited and may result in legal action under the Digital Millennium Copyright Act (DMCA).
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Watermark -->
+    <div class="watermark">PhoneSint © 2026</div>
+
+    <!-- Support Modal -->
+    <div class="modal-overlay" id="supportModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Support PhoneSint</h3>
+          <button class="modal-close" id="closeSupportModal"><i class="ph ph-x"></i></button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.8125rem; margin-bottom: 16px;">
+          If you find this service helpful, consider supporting us with a crypto donation. Your support helps keep this service free and ad-free.
+        </p>
+        <div class="crypto-grid">
+          <div class="crypto-item">
+            <div class="crypto-header">
+              <img src="/images/btc.png" alt="Bitcoin" class="crypto-logo" loading="lazy">
+              <span class="crypto-name">Bitcoin</span>
+              <span class="crypto-ticker">BTC</span>
+            </div>
+            <div class="crypto-address" id="btcAddress">bc1q0cwadmldft93ju4ta9ks52u7pq3nxaw049mtrd</div>
+            <button class="crypto-copy-btn" data-address="bc1q0cwadmldft93ju4ta9ks52u7pq3nxaw049mtrd">
+              <i class="ph ph-copy"></i> Copy
+            </button>
+          </div>
+          <div class="crypto-item">
+            <div class="crypto-header">
+              <img src="/images/trx.png" alt="TRON" class="crypto-logo" loading="lazy">
+              <span class="crypto-name">TRON</span>
+              <span class="crypto-ticker">TRX</span>
+            </div>
+            <div class="crypto-address" id="trxAddress">TGufsHEY3D6URUqsKr22JDhEktYuEH2uCp</div>
+            <button class="crypto-copy-btn" data-address="TGufsHEY3D6URUqsKr22JDhEktYuEH2uCp">
+              <i class="ph ph-copy"></i> Copy
+            </button>
+          </div>
+          <div class="crypto-item">
+            <div class="crypto-header">
+              <img src="/images/ltc.png" alt="Litecoin" class="crypto-logo" loading="lazy">
+              <span class="crypto-name">Litecoin</span>
+              <span class="crypto-ticker">LTC</span>
+            </div>
+            <div class="crypto-address" id="ltcAddress">LfSUTWvE46T8Dfbn7DGFaoXmrvdvvqy4yk</div>
+            <button class="crypto-copy-btn" data-address="LfSUTWvE46T8Dfbn7DGFaoXmrvdvvqy4yk">
+              <i class="ph ph-copy"></i> Copy
+            </button>
+          </div>
+          <div class="crypto-item">
+            <div class="crypto-header">
+              <img src="/images/eth.png" alt="Ethereum" class="crypto-logo" loading="lazy">
+              <span class="crypto-name">Ethereum</span>
+              <span class="crypto-ticker">ETH</span>
+            </div>
+            <div class="crypto-address" id="ethAddress">0xB743bBE5803149Dd6E2729303c0BD28e69446f3e</div>
+            <button class="crypto-copy-btn" data-address="0xB743bBE5803149Dd6E2729303c0BD28e69446f3e">
+              <i class="ph ph-copy"></i> Copy
+            </button>
+          </div>
+          <div class="crypto-item">
+            <div class="crypto-header">
+              <img src="/images/sol.png" alt="Solana" class="crypto-logo" loading="lazy">
+              <span class="crypto-name">Solana</span>
+              <span class="crypto-ticker">SOL</span>
+            </div>
+            <div class="crypto-address" id="solAddress">7vnYKQ1hdcfbCGizuKxKb2CgtceSAgHoFzTLaGs9v5SK</div>
+            <button class="crypto-copy-btn" data-address="7vnYKQ1hdcfbCGizuKxKb2CgtceSAgHoFzTLaGs9v5SK">
+              <i class="ph ph-copy"></i> Copy
+            </button>
+          </div>
+          <div class="crypto-item">
+            <div class="crypto-header">
+              <img src="/images/xrp.png" alt="XRP" class="crypto-logo" loading="lazy">
+              <span class="crypto-name">XRP</span>
+              <span class="crypto-ticker">XRP</span>
+            </div>
+            <div class="crypto-address" id="xrpAddress">rGXjk9GRLjfz5bCbcKZP4tZc8pdsNaTPMq</div>
+            <button class="crypto-copy-btn" data-address="rGXjk9GRLjfz5bCbcKZP4tZc8pdsNaTPMq">
+              <i class="ph ph-copy"></i> Copy
+            </button>
+          </div>
+          <div class="crypto-item">
+            <div class="crypto-header">
+              <img src="/images/doge.png" alt="Dogecoin" class="crypto-logo" loading="lazy">
+              <span class="crypto-name">Dogecoin</span>
+              <span class="crypto-ticker">DOGE</span>
+            </div>
+            <div class="crypto-address" id="dogeAddress">DTRW9Y8PnuV9Ty32VwDNbadc9U553z5YX8</div>
+            <button class="crypto-copy-btn" data-address="DTRW9Y8PnuV9Ty32VwDNbadc9U553z5YX8">
+              <i class="ph ph-copy"></i> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const elements = {
+      searchContainer: document.getElementById('searchContainer'),
+      resultsContainer: document.getElementById('resultsContainer'),
+      searchForm: document.getElementById('searchForm'),
+      phoneInput: document.getElementById('phoneInput'),
+      searchBtn: document.getElementById('searchBtn'),
+      errorMessage: document.getElementById('errorMessage'),
+      errorText: document.getElementById('errorText'),
+      newSearchBtn: document.getElementById('newSearchBtn'),
+      shareBtn: document.getElementById('shareBtn'),
+      exportBtn: document.getElementById('exportBtn'),
+      shareModal: document.getElementById('shareModal'),
+      exportModal: document.getElementById('exportModal'),
+      closeShareModal: document.getElementById('closeShareModal'),
+      closeExportModal: document.getElementById('closeExportModal'),
+      copyUrlBtn: document.getElementById('copyUrlBtn'),
+      shareUrl: document.getElementById('shareUrl'),
+      exportJsonBtn: document.getElementById('exportJsonBtn'),
+      exportTxtBtn: document.getElementById('exportTxtBtn'),
+      installModal: document.getElementById('installModal'),
+      closeInstallModal: document.getElementById('closeInstallModal'),
+      installBtn: document.getElementById('installBtn'),
+      laterInstallBtn: document.getElementById('laterInstallBtn'),
+      resultFlag: document.getElementById('resultFlag'),
+      resultNumber: document.getElementById('resultNumber'),
+      currentTime: document.getElementById('currentTime'),
+      currentDate: document.getElementById('currentDate'),
+      timezoneName: document.getElementById('timezoneName'),
+      country: document.getElementById('country'),
+      countryCode: document.getElementById('countryCode'),
+      carrier: document.getElementById('carrier'),
+      lineType: document.getElementById('lineType'),
+      location: document.getElementById('location'),
+      nationalFormat: document.getElementById('nationalFormat'),
+      internationalFormat: document.getElementById('internationalFormat'),
+      areaCode: document.getElementById('areaCode'),
+      areaCodeLength: document.getElementById('areaCodeLength'),
+      subscriberNumber: document.getElementById('subscriberNumber'),
+      intlPrefix: document.getElementById('intlPrefix'),
+      capital: document.getElementById('capital'),
+      languages: document.getElementById('languages'),
+      currency: document.getElementById('currency'),
+      emergency: document.getElementById('emergency'),
+      isValid: document.getElementById('isValid'),
+      lineStatus: document.getElementById('lineStatus'),
+      isVoip: document.getElementById('isVoip'),
+      riskLevel: document.getElementById('riskLevel'),
+      isDisposable: document.getElementById('isDisposable'),
+      isAbuse: document.getElementById('isAbuse'),
+      totalBreaches: document.getElementById('totalBreaches'),
+      firstBreach: document.getElementById('firstBreach'),
+      lastBreach: document.getElementById('lastBreach'),
+      totalSearches: document.getElementById('totalSearches'),
+      topCountry: document.getElementById('topCountry'),
+      lastSearch: document.getElementById('lastSearch'),
+      qrCode: document.getElementById('qrCode'),
+      supportBtn: document.getElementById('supportBtn'),
+      supportModal: document.getElementById('supportModal'),
+      closeSupportModal: document.getElementById('closeSupportModal'),
+    };
+
+    let currentTimezone = null;
+    let currentNumber = null;
+    let timeInterval = null;
+    let currentData = null;
+
+    // Statistics functions
+    function getStats() {
+      try {
+        return JSON.parse(localStorage.getItem('phonesint_stats') || '{"searches": 0, "countries": {}, "lastSearch": null}');
+      } catch {
+        return { searches: 0, countries: {}, lastSearch: null };
+      }
+    }
+
+    function saveStats(country) {
+      const stats = getStats();
+      stats.searches++;
+      if (country) {
+        stats.countries[country] = (stats.countries[country] || 0) + 1;
+      }
+      stats.lastSearch = new Date().toISOString();
+      localStorage.setItem('phonesint_stats', JSON.stringify(stats));
+      updateStatsDisplay(stats);
+    }
+
+    function updateStatsDisplay(stats) {
+      elements.totalSearches.textContent = stats.searches;
+
+      // Find top country
+      const topCountry = Object.entries(stats.countries).sort((a, b) => b[1] - a[1])[0];
+      elements.topCountry.textContent = topCountry ? topCountry[0] : '-';
+
+      // Last search
+      if (stats.lastSearch) {
+        const date = new Date(stats.lastSearch);
+        elements.lastSearch.textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+    }
+
+    // Copy function
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+    }
+
+    // Export functions
+    function exportAsJson(data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `phonesint-${data.inputNumber}-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportAsTxt(data) {
+      const pd = data.phoneDetails;
+      const content = `PhoneSint Lookup Results
+========================
+Number: ${data.inputNumber}
+Country: ${pd.country} (${pd.countryCode})
+Carrier: ${pd.carrier}
+Line Type: ${pd.lineTypeLabel}
+Location: ${pd.location.city}, ${pd.location.region}
+Timezone: ${pd.timezone} (${pd.timezoneOffset})
+
+Number Formats:
+- National: ${pd.numberComponents.nationalFormat}
+- International: ${pd.numberComponents.internationalFormat}
+- Area Code: ${pd.numberComponents.areaCode} (${pd.numberComponents.areaCodeLength})
+- Subscriber: ${pd.numberComponents.subscriberNumber}
+
+Country Info:
+- Capital: ${data.countryInfo.capital}
+- Languages: ${data.countryInfo.languages}
+- Currency: ${data.countryInfo.currency}
+- Emergency: ${data.countryInfo.emergencyNumbers}
+
+Validation:
+- Valid: ${data.validation.isValid}
+- Line Status: ${data.validation.lineStatus}
+- Is VoIP: ${data.validation.isVoip}
+
+Risk Assessment:
+- Risk Level: ${data.risk.level}
+- Disposable: ${data.risk.isDisposable}
+- Abuse Detected: ${data.risk.isAbuseDetected}
+
+Generated: ${new Date().toLocaleString()}
+`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `phonesint-${data.inputNumber}-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // QR Code generation
+    function generateQRCode(number) {
+      if (!elements.qrCode || !window.QRCode) return;
+      try {
+        QRCode.toCanvas(elements.qrCode, `tel:${number}`, {
+          width: 150,
+          margin: 2,
+          color: {
+            dark: '#ffffff',
+            light: '#000000'
+          }
+        });
+      } catch (e) {
+        console.error('QR Code generation failed:', e);
+      }
+    }
+
+    // Keyboard shortcuts
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Ctrl+K or Cmd+K - Focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          elements.phoneInput.focus();
+          elements.phoneInput.select();
+        }
+        // Escape - Clear and reset
+        if (e.key === 'Escape') {
+          if (elements.shareModal.classList.contains('visible')) {
+            closeShareModal();
+          } else if (elements.exportModal.classList.contains('visible')) {
+            closeExportModal();
+          } else if (!elements.searchContainer.classList.contains('hidden')) {
+            elements.phoneInput.blur();
+          } else {
+            newSearch();
+          }
+        }
+        // Enter in search input - trigger search (already handled by form)
+      });
+    }
+
+    function setLoading(isLoading) {
+      if (isLoading) {
+        elements.searchBtn.classList.add('loading');
+        elements.searchBtn.disabled = true;
+        elements.searchBtn.querySelector('.btn-spinner').style.display = 'inline-block';
+        elements.searchBtn.querySelector('.btn-icon').style.display = 'none';
+      } else {
+        elements.searchBtn.classList.remove('loading');
+        elements.searchBtn.disabled = false;
+        elements.searchBtn.querySelector('.btn-spinner').style.display = 'none';
+        elements.searchBtn.querySelector('.btn-icon').style.display = 'inline-block';
+      }
+    }
+
+    function showError(message) {
+      elements.errorText.textContent = message;
+      elements.errorMessage.classList.add('visible');
+      elements.phoneInput.classList.add('error');
+    }
+
+    function hideError() {
+      elements.errorMessage.classList.remove('visible');
+      elements.phoneInput.classList.remove('error');
+    }
+
+    function updateCurrentTime(timezone) {
+      if (!timezone || timezone === 'Unknown') return;
+      
+      const options = {
+        timeZone: timezone,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      };
+      const dateOptions = {
+        timeZone: timezone,
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      
+      const updateTime = () => {
+        const now = new Date();
+        elements.currentTime.textContent = now.toLocaleTimeString('en-US', options);
+        elements.currentDate.textContent = now.toLocaleDateString('en-US', dateOptions);
+      };
+      
+      updateTime();
+      if (timeInterval) clearInterval(timeInterval);
+      timeInterval = setInterval(updateTime, 1000);
+    }
+
+    function createBadge(text, type) {
+      const icons = { success: '✓', warning: '⚠', error: '✕', info: 'ℹ' };
+      return `<span class="badge badge-${type}">${icons[type] || ''} ${text}</span>`;
+    }
+
+    function showResults(data) {
+      currentNumber = data.inputNumber;
+      const pd = data.phoneDetails;
+      
+      // Header
+      elements.resultFlag.textContent = data.flag || '🏳️';
+      elements.resultNumber.textContent = data.inputNumber;
+      
+      // Timezone
+      currentTimezone = pd.timezone;
+      elements.timezoneName.textContent = `${pd.timezone} (${pd.timezoneOffset})`;
+      updateCurrentTime(pd.timezone);
+      
+      // Phone Details
+      elements.country.textContent = pd.country;
+      elements.countryCode.textContent = pd.countryCode;
+      elements.carrier.textContent = pd.carrier;
+      elements.lineType.innerHTML = `${pd.lineTypeIcon || '❓'} ${pd.lineTypeLabel}`;
+      
+      // Fix location to show real API data only
+      const city = pd.location?.city || '';
+      const region = pd.location?.region || '';
+      if (city && region) {
+        elements.location.textContent = `${city}, ${region}`;
+      } else if (city) {
+        elements.location.textContent = city;
+      } else if (region) {
+        elements.location.textContent = region;
+      } else {
+        elements.location.textContent = 'Not available';
+      }
+
+      // Number Formats
+      if (pd.numberComponents) {
+        elements.nationalFormat.textContent = pd.numberComponents.nationalFormat || 'Not available';
+        elements.internationalFormat.textContent = pd.numberComponents.internationalFormat || 'Not available';
+        elements.areaCode.textContent = pd.numberComponents.areaCode || 'Not available';
+        elements.areaCodeLength.textContent = pd.numberComponents.areaCodeLength || 'Not available';
+        elements.subscriberNumber.textContent = pd.numberComponents.subscriberNumber || 'Not available';
+      }
+      elements.intlPrefix.textContent = pd.internationalPrefix || 'Not available';
+
+      // Country Info
+      if (data.countryInfo) {
+        elements.capital.textContent = data.countryInfo.capital;
+        elements.languages.textContent = data.countryInfo.languages;
+        elements.currency.textContent = data.countryInfo.currency;
+        elements.emergency.textContent = data.countryInfo.emergencyNumbers;
+      }
+
+      // Validation
+      if (data.validation) {
+        elements.isValid.innerHTML = data.validation.isValid === true
+          ? createBadge('Valid', 'success')
+          : data.validation.isValid === false
+            ? createBadge('Invalid', 'error')
+            : '<span class="badge badge-info">ℹ Not available</span>';
+        elements.lineStatus.textContent = data.validation.lineStatus && data.validation.lineStatus !== 'Unknown' ? data.validation.lineStatus : 'Not available';
+        elements.isVoip.textContent = data.validation.isVoip === true ? 'Yes' : data.validation.isVoip === false ? 'No' : 'Not available';
+      }
+
+      // Risk
+      if (data.risk) {
+        const riskLevel = data.risk.level;
+        const hasRiskData = riskLevel && riskLevel !== 'Unknown';
+        const riskBadge = hasRiskData ? (riskLevel === 'low' ? 'success' : riskLevel === 'medium' ? 'warning' : 'error') : 'info';
+        elements.riskLevel.innerHTML = hasRiskData ? createBadge(riskLevel, riskBadge) : '<span class="badge badge-info">ℹ Not available</span>';
+        elements.isDisposable.textContent = data.risk.isDisposable === true ? 'Yes' : data.risk.isDisposable === false ? 'No' : 'Not available';
+        elements.isAbuse.textContent = data.risk.isAbuseDetected === true ? 'Yes' : data.risk.isAbuseDetected === false ? 'No' : 'Not available';
+      }
+
+      // Breaches - Friendly messages
+      if (data.breaches) {
+        if (data.breaches.totalBreaches === null || data.breaches.totalBreaches === undefined) {
+          elements.totalBreaches.innerHTML = '<span class="badge badge-info">ℹ Not available</span>';
+          elements.firstBreach.innerHTML = '<span class="badge badge-info">ℹ Not available</span>';
+          elements.lastBreach.innerHTML = '<span class="badge badge-info">ℹ Not available</span>';
+        } else if (data.breaches.totalBreaches === 0) {
+          elements.totalBreaches.innerHTML = '<span class="badge badge-success">✓ None</span>';
+          elements.firstBreach.innerHTML = '<span class="badge badge-success">✓ N/A</span>';
+          elements.lastBreach.innerHTML = '<span class="badge badge-success">✓ N/A</span>';
+        } else {
+          elements.totalBreaches.textContent = data.breaches.totalBreaches;
+          elements.firstBreach.textContent = data.breaches.dateFirstBreached || 'Unknown';
+          elements.lastBreach.textContent = data.breaches.dateLastBreached || 'Unknown';
+        }
+      }
+
+      elements.searchContainer.classList.add('hidden');
+      elements.resultsContainer.classList.add('visible');
+      
+      // Save statistics
+      saveStats(pd.country);
+      
+      // Generate QR code
+      generateQRCode(data.inputNumber);
+      
+      // Store current data for export
+      currentData = data;
+    }
+
+    function newSearch() {
+      elements.resultsContainer.classList.remove('visible');
+      elements.searchContainer.classList.remove('hidden');
+      elements.phoneInput.value = '';
+      hideError();
+      elements.phoneInput.focus();
+      if (timeInterval) clearInterval(timeInterval);
+      currentNumber = null;
+    }
+
+    function openShareModal() {
+      if (!currentNumber) return;
+      const url = `${window.location.origin}${window.location.pathname}?number=${encodeURIComponent(currentNumber)}`;
+      elements.shareUrl.textContent = url;
+      elements.shareModal.classList.add('visible');
+    }
+
+    function closeShareModal() {
+      elements.shareModal.classList.remove('visible');
+    }
+
+    function closeSupportModal() {
+      elements.supportModal.classList.remove('visible');
+    }
+
+    async function copyUrl() {
+      try {
+        await navigator.clipboard.writeText(elements.shareUrl.textContent);
+        elements.copyUrlBtn.innerHTML = '<i class="ph ph-check"></i> Copied!';
+        setTimeout(() => {
+          elements.copyUrlBtn.innerHTML = '<i class="ph ph-copy"></i> Copy Link';
+        }, 2000);
+      } catch {
+        elements.copyUrlBtn.innerHTML = '<i class="ph ph-x"></i> Failed';
+        setTimeout(() => {
+          elements.copyUrlBtn.innerHTML = '<i class="ph ph-copy"></i> Copy Link';
+        }, 2000);
+      }
+    }
+
+    function loadFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const number = params.get('number');
+      if (number) {
+        elements.phoneInput.value = number;
+        handleSubmit(new Event('submit'), true);
+      }
+    }
+
+    async function lookupPhoneNumber(number) {
+      const url = `/api/phone-info?number=${encodeURIComponent(number)}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store',
+      });
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('Expected JSON, got:', text.substring(0, 500));
+        throw new Error('Server returned HTML instead of JSON');
+      }
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Lookup failed');
+      return data;
+    }
+
+    async function handleSubmit(event, auto = false) {
+      if (event) event.preventDefault();
+      const phoneNumber = elements.phoneInput.value.trim();
+      if (!phoneNumber) { if (!auto) showError('Enter a phone number'); return; }
+      const cleaned = phoneNumber.replace(/[^\d+]/g, '');
+      if (!/^\+\d{10,15}$/.test(cleaned)) {
+        if (!auto) showError('Use format: +14155552671');
+        return;
+      }
+      hideError();
+      setLoading(true);
+      try {
+        const data = await lookupPhoneNumber(cleaned);
+        showResults(data);
+        if (auto) {
+          window.history.pushState({}, '', window.location.pathname);
+        }
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Event listeners
+    elements.searchForm.addEventListener('submit', handleSubmit);
+    elements.newSearchBtn.addEventListener('click', newSearch);
+    elements.shareBtn.addEventListener('click', openShareModal);
+    elements.exportBtn.addEventListener('click', () => elements.exportModal.classList.add('visible'));
+    elements.supportBtn.addEventListener('click', () => elements.supportModal.classList.add('visible'));
+    elements.closeSupportModal.addEventListener('click', closeSupportModal);
+    elements.supportModal.addEventListener('click', (e) => {
+      if (e.target === elements.supportModal) closeSupportModal();
+    });
+
+    // Crypto copy buttons
+    document.querySelectorAll('.crypto-copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const address = btn.dataset.address;
+        try {
+          await navigator.clipboard.writeText(address);
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<i class="ph ph-check"></i> Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch {
+          const textarea = document.createElement('textarea');
+          textarea.value = address;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<i class="ph ph-check"></i> Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('copied');
+          }, 2000);
+        }
+      });
+    });
+    elements.closeShareModal.addEventListener('click', closeShareModal);
+    elements.closeExportModal.addEventListener('click', () => elements.exportModal.classList.remove('visible'));
+    elements.copyUrlBtn.addEventListener('click', copyUrl);
+    elements.exportJsonBtn.addEventListener('click', () => {
+      if (currentData) exportAsJson(currentData);
+      elements.exportModal.classList.remove('visible');
+    });
+    elements.exportTxtBtn.addEventListener('click', () => {
+      if (currentData) exportAsTxt(currentData);
+      elements.exportModal.classList.remove('visible');
+    });
+    elements.shareModal.addEventListener('click', (e) => {
+      if (e.target === elements.shareModal) closeShareModal();
+    });
+    elements.exportModal.addEventListener('click', (e) => {
+      if (e.target === elements.exportModal) elements.exportModal.classList.remove('visible');
+    });
+    
+    elements.phoneInput.addEventListener('input', hideError);
+    elements.phoneInput.addEventListener('blur', () => {
+      let v = elements.phoneInput.value.trim();
+      if (v && !v.startsWith('+')) {
+        elements.phoneInput.value = '+' + v.replace(/[^\d]/g, '');
+      }
+    });
+
+    // Setup keyboard shortcuts
+    setupKeyboardShortcuts();
+
+    // Load stats on page load
+    updateStatsDisplay(getStats());
+
+    // URL Restriction Check - Only allow https://phonesint.vercel.app/
+    const allowedHost = 'phonesint.vercel.app';
+    const allowedPath = '/';
+    const currentHost = window.location.hostname;
+    const currentPath = window.location.pathname;
+
+    // Check if running on allowed host and path (skip for localhost development)
+    if (currentHost !== 'localhost' && currentHost !== '127.0.0.1') {
+      if (currentHost !== allowedHost || !currentPath.startsWith(allowedPath)) {
+        document.body.innerHTML = `
+          <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #000; color: #fff; font-family: 'Inter', sans-serif; padding: 24px;">
+            <div style="max-width: 500px; text-align: center;">
+              <h1 style="font-size: 1.5rem; margin-bottom: 16px; color: #ef4444;">Access Denied</h1>
+              <p style="color: #888; line-height: 1.6;">This service is only available at<br><strong style="color: #fff;">https://phonesint.vercel.app/</strong></p>
+            </div>
+          </div>
+        `;
+        throw new Error('Invalid URL');
+      }
+    }
+
+    // Load from URL on page load
+    loadFromUrl();
+    
+    // Register service worker for PWA
+    let deferredPrompt = null;
+    
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(() => {
+        console.log('Service Worker registered');
+      }).catch((err) => {
+        console.error('SW registration failed:', err);
+      });
+    }
+    
+    // Listen for install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // Show install prompt after 3 seconds
+      setTimeout(() => {
+        const hasDismissed = localStorage.getItem('phonesint_install_dismissed');
+        if (!hasDismissed) {
+          elements.installModal.classList.add('visible');
+        }
+      }, 3000);
+    });
+    
+    // Install button click
+    elements.installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('Install prompt outcome:', outcome);
+        deferredPrompt = null;
+        elements.installModal.classList.remove('visible');
+      } else {
+        // Firefox fallback message
+        alert('In Firefox: Click the menu (≡) → Install PhoneSint');
+      }
+    });
+    
+    // Later button click
+    elements.laterInstallBtn.addEventListener('click', () => {
+      localStorage.setItem('phonesint_install_dismissed', 'true');
+      elements.installModal.classList.remove('visible');
+    });
+    
+    // Close install modal
+    elements.closeInstallModal.addEventListener('click', () => {
+      elements.installModal.classList.remove('visible');
+    });
+    
+    elements.installModal.addEventListener('click', (e) => {
+      if (e.target === elements.installModal) elements.installModal.classList.remove('visible');
+    });
+
+    // Security: Disable right-click context menu
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      return false;
+    });
+
+    // Security: Disable keyboard shortcuts for dev tools (document level)
+    document.addEventListener('keydown', (e) => {
+      // Disable F12
+      if (e.key === 'F12') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      // Disable Ctrl+Shift+I (DevTools)
+      if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      // Disable Ctrl+Shift+J (DevTools Console)
+      if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      // Disable Ctrl+Shift+C (Inspect Element)
+      if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      // Disable Ctrl+U / Cmd+U (View Source)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'U') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      // Disable Ctrl+S / Cmd+S (Save Page)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'S') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      // Disable Ctrl+A / Cmd+A (Select All)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'A') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      // Disable Ctrl+P / Cmd+P (Print)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'P') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      // Disable Ctrl+Shift+K (Firefox DevTools)
+      if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }, { capture: true });
+
+    // Security: Additional window-level prevention for Ctrl+U
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'U') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }, { capture: true });
+  </script>
+</body>
+</html>
