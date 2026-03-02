@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Key');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // GET - Fetch APIs (public, but sanitized)
+        // GET - Fetch APIs (public, sanitized)
         if (req.method === 'GET') {
             const response = await makeRequest(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                 method: 'GET',
@@ -76,12 +76,8 @@ module.exports = async (req, res) => {
             return res.status(200).json(sanitizedData);
         }
 
-        // POST - Add new API (requires admin key)
+        // POST - Add new API (public)
         if (req.method === 'POST') {
-            const adminKey = req.headers['x-admin-key'];
-            if (!adminKey || adminKey !== ADMIN_KEY) {
-                return res.status(403).json({ error: 'Unauthorized' });
-            }
 
             const newApi = req.body;
             if (!newApi) {
@@ -124,12 +120,8 @@ module.exports = async (req, res) => {
             return res.status(200).json({ success: true, data: newApi });
         }
 
-        // DELETE - Remove an API (requires admin key)
+        // DELETE - Remove an API (public)
         if (req.method === 'DELETE') {
-            const adminKey = req.headers['x-admin-key'];
-            if (!adminKey || adminKey !== ADMIN_KEY) {
-                return res.status(403).json({ error: 'Unauthorized' });
-            }
 
             const { id } = req.body;
             if (!id) {

@@ -1,5 +1,5 @@
 // API Showcase - Modern Black & White
-const ADMIN_KEY = 'h[%B7aaG@Y2=L(#-7g^C}@qmq+|u`5X~RiRF3ATa8d_u$~FU};HUf_b@K>uP:/wK1(gzL/1(yCV8+_Jv7Sazl$D3_cF@57nuPqQ/w-OY(ma@[qYlfh:Ju)+ZeZ@sg(VA';
+// No authentication - public API
 
 // Sanitize input
 function sanitizeInput(input) {
@@ -73,7 +73,7 @@ async function fetchApis() {
 async function submitApi(apiData) {
     const response = await fetch('/api/bin', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(apiData)
     });
     if (!response.ok) {
@@ -87,7 +87,7 @@ async function submitApi(apiData) {
 async function deleteApi(apiId) {
     const response = await fetch('/api/bin', {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: apiId })
     });
     if (!response.ok) {
