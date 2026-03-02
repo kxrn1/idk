@@ -3,6 +3,7 @@
         { "source": "/api/:path*", "destination": "/api/:path*" },
         { "source": "/search", "destination": "/search.html" },
         { "source": "/publish", "destination": "/publish.html" },
+        { "source": "/profile", "destination": "/profile.html" },
         { "source": "/(.*)", "destination": "/index.html" }
     ],
     "redirects": [],

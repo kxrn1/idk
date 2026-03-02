@@ -704,6 +704,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize category tabs
     initCategoryTabs();
 
+    // Initialize profile page
+    initProfilePage();
+
     // Fetch and render APIs on home page
     if (apiGrid) {
         try {
@@ -792,3 +795,248 @@ window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',
         document.documentElement.style.setProperty('--transition-bounce', '500ms');
     }
 });
+
+// Delete API function
+async function deleteApi(apiId) {
+    try {
+        const response = await fetch('/api/bin', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: apiId })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to delete API');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting API:', error);
+        throw error;
+    }
+}
+
+// Profile page functionality
+let apiToDelete = null;
+
+function initProfilePage() {
+    const profileGrid = document.getElementById('profileGrid');
+    const authorSearch = document.getElementById('authorSearch');
+    const searchAuthorBtn = document.getElementById('searchAuthorBtn');
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const resultModal = document.getElementById('resultModal');
+    const resultClose = document.getElementById('resultClose');
+
+    if (!profileGrid || !authorSearch) return;
+
+    // Search for author's APIs
+    searchAuthorBtn.addEventListener('click', () => {
+        const authorName = authorSearch.value.trim();
+        if (!authorName) {
+            showResultModal('error', 'Error', 'Please enter your author name');
+            return;
+        }
+
+        const userApis = apiData.filter(api => 
+            api.author.toLowerCase() === authorName.toLowerCase()
+        );
+
+        if (userApis.length === 0) {
+            profileGrid.innerHTML = `
+                <div class="no-apis">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <p>No APIs found for "${escapeHtml(authorName)}"</p>
+                </div>
+            `;
+            return;
+        }
+
+        profileGrid.innerHTML = '';
+        userApis.forEach((api, index) => {
+            const card = createApiCard(api, index, true);
+            profileGrid.appendChild(card);
+        });
+    });
+
+    // Delete modal handlers
+    if (cancelDeleteBtn && deleteModal) {
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+            apiToDelete = null;
+        });
+    }
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (!apiToDelete) return;
+
+            try {
+                await deleteApi(apiToDelete);
+                deleteModal.style.display = 'none';
+                
+                // Remove from local array
+                apiData = apiData.filter(api => api.id !== apiToDelete);
+                
+                // Re-render profile grid
+                const authorName = authorSearch.value.trim();
+                const userApis = apiData.filter(api => 
+                    api.author.toLowerCase() === authorName.toLowerCase()
+                );
+                
+                profileGrid.innerHTML = '';
+                if (userApis.length === 0) {
+                    profileGrid.innerHTML = `
+                        <div class="no-apis">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <p>No APIs found</p>
+                        </div>
+                    `;
+                } else {
+                    userApis.forEach((api, index) => {
+                        const card = createApiCard(api, index, true);
+                        profileGrid.appendChild(card);
+                    });
+                }
+
+                showResultModal('success', 'Deleted!', 'Your API has been deleted successfully.');
+                apiToDelete = null;
+            } catch (error) {
+                showResultModal('error', 'Delete Failed', error.message || 'Failed to delete API.');
+            }
+        });
+    }
+
+    if (resultClose && resultModal) {
+        resultClose.addEventListener('click', () => {
+            resultModal.style.display = 'none';
+        });
+        resultModal.addEventListener('click', (e) => {
+            if (e.target === resultModal) {
+                resultModal.style.display = 'none';
+            }
+        });
+    }
+
+    if (deleteModal) {
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                deleteModal.style.display = 'none';
+                apiToDelete = null;
+            }
+        });
+    }
+}
+
+function showDeleteModal(apiId, apiTitle) {
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteMessage = document.getElementById('deleteMessage');
+    
+    if (!deleteModal) return;
+    
+    apiToDelete = apiId;
+    if (deleteMessage) {
+        deleteMessage.textContent = `Are you sure you want to delete "${apiTitle}"? This action cannot be undone.`;
+    }
+    deleteModal.style.display = 'flex';
+}
+
+function showResultModal(type, title, message) {
+    const resultModal = document.getElementById('resultModal');
+    const resultIcon = document.getElementById('resultIcon');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultMessage = document.getElementById('resultMessage');
+
+    if (!resultModal) return;
+
+    const icons = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+    };
+
+    if (resultIcon) resultIcon.innerHTML = icons[type] || '';
+    if (resultIcon) resultIcon.className = `modal-icon modal-${type}`;
+    if (resultTitle) resultTitle.textContent = title;
+    if (resultMessage) resultMessage.textContent = message;
+
+    resultModal.style.display = 'flex';
+}
+
+// Create API card with delete button for profile page
+function createApiCard(api, index, isProfile = false) {
+    const card = document.createElement('article');
+    card.className = 'api-card';
+    card.style.animationDelay = `${index * 0.05}s`;
+
+    const deleteButton = isProfile ? `
+        <button class="btn btn-danger btn-delete" onclick="showDeleteModal(${api.id}, '${sanitizeInput(api.title).replace(/'/g, "\\'")}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                <path d="M10 11v6"/>
+                <path d="M14 11v6"/>
+            </svg>
+            <span>Delete</span>
+        </button>
+    ` : '';
+
+    card.innerHTML = `
+        <div class="card-thumbnail">
+            <img src="${sanitizeInput(api.thumbnail)}" alt="${sanitizeInput(api.title)} thumbnail" loading="lazy" onerror="this.src='https://picsum.photos/seed/api/400/225'">
+            <div class="thumbnail-overlay"></div>
+        </div>
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        ${icons[api.icon] || icons['search']}
+                    </svg>
+                </div>
+                <div class="card-title-group">
+                    <h3 class="card-title">${sanitizeInput(api.title)}</h3>
+                </div>
+            </div>
+            <p class="card-description">${sanitizeInput(api.description)}</p>
+            <div class="card-meta">
+                <div class="meta-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        ${icons.calendar}
+                    </svg>
+                    <span class="label">${formatDate(api.publishedDate)}</span>
+                </div>
+                <div class="meta-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        ${icons.user}
+                    </svg>
+                    <span class="label">${sanitizeInput(api.author)}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="${sanitizeInput(api.endpoint)}" class="btn btn-primary">
+                    <span>View API</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        ${icons['arrow-right']}
+                    </svg>
+                </a>
+                <button class="btn btn-secondary" aria-label="Open website" onclick="window.open('${sanitizeInput(api.website || api.endpoint)}', '_blank')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        ${icons['external-link']}
+                    </svg>
+                </button>
+                ${deleteButton}
+            </div>
+        </div>
+    `;
+
+    return card;
+}

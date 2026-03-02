@@ -102,6 +102,54 @@ module.exports = async (req, res) => {
             return res.status(200).json({ success: true, data: newApi });
         }
 
+        // DELETE - Remove an API
+        if (req.method === 'DELETE') {
+            const { id } = req.body;
+            if (!id) {
+                return res.status(400).json({ error: 'API ID required' });
+            }
+
+            // Fetch existing data
+            const fetchRes = await makeRequest(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                method: 'GET',
+                headers: { 'X-Master-Key': MASTER_KEY, 'X-Bin-Meta': 'false' }
+            });
+
+            let existingData = [];
+            if (fetchRes.status === 200 && fetchRes.data) {
+                existingData = Array.isArray(fetchRes.data) ? fetchRes.data : [];
+            }
+
+            // Filter out the API to delete
+            const updatedData = existingData.filter(api => api.id !== id);
+
+            if (updatedData.length === existingData.length) {
+                return res.status(404).json({ error: 'API not found' });
+            }
+
+            console.log('Deleting API, new count:', updatedData.length);
+
+            // Update bin
+            const updateRes = await makeRequest(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': MASTER_KEY
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (updateRes.status !== 200) {
+                console.error('JSONBin delete error:', updateRes.status, updateRes.raw);
+                return res.status(updateRes.status).json({
+                    error: 'Failed to delete API',
+                    details: updateRes.raw || updateRes.data
+                });
+            }
+
+            return res.status(200).json({ success: true });
+        }
+
         return res.status(405).json({ error: 'Method not allowed' });
 
     } catch (error) {

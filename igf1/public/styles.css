@@ -206,11 +206,74 @@ body {
     font-size: 1rem;
 }
 
+/* Profile Page */
+.profile-intro {
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    text-align: center;
+}
+
+.profile-hint {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 0.9375rem;
+}
+
+.author-search {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.author-search input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+}
+
+.author-search input:focus {
+    outline: none;
+    border-color: var(--border-hover);
+    background: var(--bg-card-hover);
+}
+
+/* Delete Modal */
+.delete-modal {
+    max-width: 380px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.modal-actions .btn {
+    flex: 1;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
 /* Hero */
 .hero {
     text-align: center;
-    margin-bottom: 2rem;
-    margin-top: 3rem;
+    margin-bottom: 1rem;
+    margin-top: 2.5rem;
 }
 
 /* Fallback for browsers without animation support */
@@ -411,9 +474,9 @@ body {
 
 /* Publish Form */
 .publish-form {
-    max-width: 420px;
+    max-width: 380px;
     margin: 0 auto;
-    padding: 1.5rem;
+    padding: 1.25rem;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
@@ -423,8 +486,8 @@ body {
 .progress-steps {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 2rem;
+    margin-bottom: 1rem;
 }
 
 .step {
@@ -445,15 +508,15 @@ body {
 }
 
 .step-number {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: var(--bg-tertiary);
     border: 2px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 600;
     transition: all var(--transition-base);
 }
@@ -468,16 +531,6 @@ body {
     background: #22c55e;
     color: white;
     border-color: #22c55e;
-}
-
-.step-label {
-    font-size: 0.6875rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-}
-
-.step.active .step-label {
-    color: var(--text-primary);
 }
 
 /* Form Steps */
@@ -517,7 +570,7 @@ body {
 /* Publish Form */
 
 .form-group {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -886,6 +939,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .modal-icon {
@@ -895,6 +950,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .modal-icon svg {
