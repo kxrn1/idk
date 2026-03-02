@@ -181,16 +181,17 @@ function initCustomSelect() {
     display.addEventListener('click', (e) => {
         e.stopPropagation();
         const isOpen = display.classList.contains('open');
-        
+
         // Close all other selects
         document.querySelectorAll('.custom-select .select-display.open').forEach(el => {
             el.classList.remove('open');
             el.closest('.custom-select').querySelector('.select-options').classList.remove('open');
         });
-        
+
         if (!isOpen) {
             display.classList.add('open');
             customSelect.querySelector('.select-options').classList.add('open');
+            customSelect.classList.add('open');
         }
     });
 
@@ -199,17 +200,18 @@ function initCustomSelect() {
             e.stopPropagation();
             const value = option.dataset.value;
             const label = option.querySelector('span').textContent;
-            
+
             hiddenInput.value = value;
             valueSpan.textContent = label;
             display.classList.remove('placeholder');
-            
+
             options.forEach(opt => opt.classList.remove('selected'));
             option.classList.add('selected');
-            
+
             display.classList.remove('open');
             customSelect.querySelector('.select-options').classList.remove('open');
-            
+            customSelect.classList.remove('open');
+
             // Clear error
             customSelect.classList.remove('error');
             document.getElementById('categoryError').textContent = '';
@@ -220,6 +222,7 @@ function initCustomSelect() {
     document.addEventListener('click', () => {
         display.classList.remove('open');
         customSelect.querySelector('.select-options').classList.remove('open');
+        customSelect.classList.remove('open');
     });
 }
 
