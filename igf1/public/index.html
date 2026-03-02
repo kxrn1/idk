@@ -11,42 +11,30 @@
 </head>
 <body>
     <div class="page-wrapper">
-        <main class="main">
-            <section class="hero">
-                <h1 class="hero-title">
-                    <svg class="hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <header class="header">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                         <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
                         <line x1="12" y1="22.08" x2="12" y2="12"/>
                     </svg>
-                    Available APIs
-                </h1>
+                    <span>API Showcase</span>
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Explore</a>
+                    <a href="/search" class="nav-link">Search</a>
+                    <a href="/profile" class="nav-link">My APIs</a>
+                    <a href="/publish" class="nav-link nav-link-primary">Publish API</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main">
+            <section class="hero">
+                <h1 class="hero-title">Available APIs</h1>
                 <p class="hero-subtitle">Explore and integrate with our collection of powerful APIs</p>
             </section>
-
-            <div class="action-buttons">
-                <a href="/search" class="action-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <span>Search APIs</span>
-                </a>
-                <a href="/profile" class="action-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    <span>My APIs</span>
-                </a>
-                <a href="/publish" class="action-btn action-btn-primary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    <span>Publish API</span>
-                </a>
-            </div>
 
             <div class="category-tabs" id="categoryTabs">
                 <button class="tab-btn active" data-category="all">
@@ -103,12 +91,23 @@
             </div>
 
             <div class="api-grid" id="apiGrid">
-                <!-- API cards will be dynamically inserted here -->
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading APIs...</p>
+                </div>
             </div>
         </main>
+
+        <footer class="footer">
+            <p>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                Built with care
+            </p>
+        </footer>
     </div>
 
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -3,6 +3,7 @@ const https = require('https');
 
 const MASTER_KEY = process.env.JSONBIN_MASTER_KEY;
 const BIN_ID = process.env.JSONBIN_BIN_ID;
+const ADMIN_KEY = process.env.ADMIN_KEY;
 
 function makeRequest(url, options = {}) {
     return new Promise((resolve, reject) => {
@@ -27,8 +28,8 @@ function makeRequest(url, options = {}) {
 module.exports = async (req, res) => {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Key');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
@@ -40,7 +41,7 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // GET - Fetch APIs
+        // GET - Fetch APIs (public, but sanitized)
         if (req.method === 'GET') {
             const response = await makeRequest(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                 method: 'GET',
@@ -56,11 +57,32 @@ module.exports = async (req, res) => {
                 return res.status(response.status).json({ error: 'Failed to fetch' });
             }
 
-            return res.status(200).json(Array.isArray(response.data) ? response.data : []);
+            const data = Array.isArray(response.data) ? response.data : [];
+            
+            // Sanitize data - remove sensitive fields for public access
+            const sanitizedData = data.map(api => ({
+                id: api.id,
+                title: api.title,
+                description: api.description,
+                thumbnail: api.thumbnail,
+                category: api.category,
+                publishedDate: api.publishedDate,
+                author: api.author,
+                endpoint: api.endpoint,
+                website: api.website,
+                icon: api.icon
+            }));
+
+            return res.status(200).json(sanitizedData);
         }
 
-        // POST - Add new API
+        // POST - Add new API (requires admin key)
         if (req.method === 'POST') {
+            const adminKey = req.headers['x-admin-key'];
+            if (!adminKey || adminKey !== ADMIN_KEY) {
+                return res.status(403).json({ error: 'Unauthorized' });
+            }
+
             const newApi = req.body;
             if (!newApi) {
                 return res.status(400).json({ error: 'Request body required' });
@@ -102,8 +124,13 @@ module.exports = async (req, res) => {
             return res.status(200).json({ success: true, data: newApi });
         }
 
-        // DELETE - Remove an API
+        // DELETE - Remove an API (requires admin key)
         if (req.method === 'DELETE') {
+            const adminKey = req.headers['x-admin-key'];
+            if (!adminKey || adminKey !== ADMIN_KEY) {
+                return res.status(403).json({ error: 'Unauthorized' });
+            }
+
             const { id } = req.body;
             if (!id) {
                 return res.status(400).json({ error: 'API ID required' });
